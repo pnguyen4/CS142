@@ -11,10 +11,10 @@
         print '><a href="index.php">Home</a></li>';
 
         print '<li ';
-        if ($PATH_PARTS['filename'] == 'sampleQuery') {
+        if ($PATH_PARTS['filename'] == 'form') {
             print ' class="activePage" ';
         }
-        print '><a href="sampleQuery.php">Sample SELECT</a></li>';
+        print '><a href="form.php">Form</a></li>';
 
         print '<li ';
         if ($PATH_PARTS['filename'] == 'tables') {
