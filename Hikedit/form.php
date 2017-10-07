@@ -28,10 +28,9 @@ $thisURL = $domain . $phpSelf;
 // Initialize variables one for each form element
 // in the order they appear on the form
 
-$firstName = "";
+$hiker = "";
+$hikedate = "";
 
-$email = "youremail@uvm.edu";
-    
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION: 1d form error flags
@@ -40,24 +39,24 @@ $email = "youremail@uvm.edu";
 // in the order they appear in section 1c.
 // We are keeping track of the first mistake we make so we can set the
 // autofocus to it.
-$firstMistake = "";
 
-$firstNameERROR = false;
-
-$emailERROR = false;
+$hikerError = false;
+$hikedateError = false;
 
 ////%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION: 1e misc variables
 //
 // create array to hold error messages filled (if any) in 2d displayed in 3c.
-$errorMsg = array(); 
- 
+$errorMsg = array();
+
 // array used to hold form values that will be written to a CSV file
+// ** stored in database in this lab
 $dataRecord = array();
 
 // have we mailed the information to the user?
-$mailed=false;
+// ** not emaling in this lab
+// $mailed=false;
 
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //
@@ -68,7 +67,7 @@ if (isset($_POST["btnSubmit"])) {
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
     // SECTION: 2a Security
-    // 
+    //
     if (!securityCheck($thisURL)) {
         $msg = "<p>Sorry you cannot access this page. ";
         $msg.= "Security breach detected and reported.</p>";
@@ -77,17 +76,17 @@ if (isset($_POST["btnSubmit"])) {
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
-    // SECTION: 2b Sanitize (clean) data 
+    // SECTION: 2b Sanitize (clean) data
     // remove any potential JavaScript or html code from users input on the
     // form. Note it is best to follow the same order as declared in section 1c.
 
-    $firstName = htmlentities($_POST["txtFirstName"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $firstName;
-    
-    $email = filter_var($_POST["txtEmail"], FILTER_SANITIZE_EMAIL);    
-    $dataRecord[] = $email;
-    
-    
+    $hiker = htmlentities($_POST["pmkHikerId"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $hiker;
+
+    $hikedate = htmlentities($_POST["fldDateHiked"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $hikedate;
+
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
     // SECTION: 2c Validation
@@ -98,65 +97,61 @@ if (isset($_POST["btnSubmit"])) {
     // order that the elements appear on your form so that the error messages
     // will be in the order they appear. errorMsg will be displayed on the form
     // see section 3b. The error flag ($emailERROR) will be used in section 3c.
-    
-    if ($firstName == "") {
-        $errorMsg[] = "Please enter your first name";
-        $firstNameERROR = true;
-    } elseif (!verifyAlphaNum($firstName)) {
-        $errorMsg[] = "Your first name appears to have extra character.";
-        $firstNameERROR = true;
+
+    if($hiker == ""){
+        $errorMsg[] = "Please select a hiker";
+        $hikerError = true;
+    } elseif (!verifyAlphaNum($hiker)) {
+        $errorMsg[] = "Please select a hiker";
+        $hikerError = true;
     }
-    if ($firstMistake == "" and $firstNameERROR) {
-        $firstMistake = "firstname";
+
+    if($hikedate == "") {
+        $errorMsg[] = "Please enter a date";
+        $hikedateError = true;
+    } elseif (!verifyDate($hikedate)) {
+        $errorMsg[] = "Please enter a valid date";
+        $hikerError = true;
     }
-    
-    
-    if ($email == "") {    
-        $errorMsg[] = "Please enter your email address";
-        $emailERROR = true;
-    } elseif (!verifyEmail($email)) {
-        $errorMsg[] = "Your email address appears to be incorrect.";
-        $emailERROR = true;
-    }
-    if ($firstMistake == "" and $emailERROR) {
-        $firstMistake = "email";
-    }
-    
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
     // SECTION: 2d Process Form - Passed Validation
     //
     // Process for when the form passes validation (the errorMsg array is empty)
-    //    
+    //
     if (!$errorMsg) {
         if ($debug)
             print "<p>Form is valid</p>";
-             
+
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         //
         // SECTION: 2e Save Data
         //
-        // This block saves the data to a CSV file.   
-        
+        // This block saves the data to a CSV file.
+
+        /* ** not in this lab
+         // WE WILL BE SAVING INTO A DATABASE
         $fileExt = ".csv";
         $myFileName = "data/registration"; // NOTE YOU MUST MAKE THE FOLDER !!!
         $filename = $myFileName . $fileExt;
-    
+
         if ($debug){
             print "\n\n<p>filename is " . $filename;
         }
-    
+
         // now we just open the file for append
         $file = fopen($filename, 'a');
-    
+
         // write the forms informations
         fputcsv($file, $dataRecord);
-    
+
         // close the file
         fclose($file);
-    
-     
+         */
+
+
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
         //
         // SECTION: 2f Create message
@@ -165,7 +160,7 @@ if (isset($_POST["btnSubmit"])) {
         // to the person filling out the form (section 2g).
 
         $message = '<h2>Your information.</h2>';
-    
+
         foreach ($_POST as $htmlName => $value) {
             $message .= "<p>";
 
@@ -179,25 +174,6 @@ if (isset($_POST["btnSubmit"])) {
 
             $message .= " = " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p>";
         }
-    
-    
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        //
-        // SECTION: 2g Mail to user
-        //
-        // Process for mailing a message which contains the forms data
-        // the message was built in section 2f.
-        $to = $email; // the person who filled out the form
-        $cc = "";
-        $bcc = "";
-
-        $from = "WRONG site <customer.service@yoursite.com>";
-
-                // subject of mail should make sense to your form
-        $todaysDate = strftime("%x"); 
-        $subject = "Research Study: " . $todaysDate;
-
-        $mailed = sendMail($to, $cc, $bcc, $from, $subject, $message);
 
     } // end form is valid
 
@@ -215,35 +191,25 @@ if (isset($_POST["btnSubmit"])) {
     <?php
     //####################################
     //
-    // SECTION 3a. 
-    // 
+    // SECTION 3a.
+    //
     // If its the first time coming to the form or there are errors we are going
     // to display the form.
-    if (isset($_POST["btnSubmit"]) AND empty($errorMsg)) { // closing of if marked with: end body submit 
+    if (isset($_POST["btnSubmit"]) AND empty($errorMsg)) { // closing of if marked with: end body submit
         print "<h2>Thank you for providing your information.</h2>";
-    
-        print "<p>For your records a copy of this data has ";
-    
-        if (!$mailed) {
-            print "not ";
-        }
-        print "been sent:</p>";
-        print "<p>To: " . $email . "</p>";
-    
-        print $message;
+
     } else {
-    
-        print '<h2>Register Today</h2>';
-        print '<p class="form-heading">You information will greatly help us with our research.</p>';
-     
+
+        print '<h2>Hiker Form</h2>';
+
         //####################################
         //
         // SECTION 3b Error Messages
         //
         // display any error messages before we print out the form
-   
+
         if ($errorMsg) {
-            print '<div id="errors">' . "\n"; 
+            print '<div id="errors">' . "\n";
             print "<h2>Your form has the following mistakes that need to be fixed.</h2>\n";
             print "<ol>\n";
 
@@ -255,7 +221,7 @@ if (isset($_POST["btnSubmit"])) {
             print "</div>\n";
         }
 
-        //####################################
+		//####################################
         //
         // SECTION 3c html Form
         //
@@ -272,61 +238,55 @@ if (isset($_POST["btnSubmit"])) {
        */
     ?>
 
-    <form action="<?php print $phpSelf; ?>"
-          id="frmRegister"
-          method="post">
 
-                <fieldset class="contact">
-                    <legend>Contact Information</legend>
-                    <p>
-                        <label class="required text-field" for="txtFirstName">First Name</label>  
-                        <input <?php 
-                                if ($firstMistake == "firstname" or $firstMistake == "")
-                                    print ' autofocus ';
-                                ?>                    
-                                <?php if ($firstNameERROR) print 'class="mistake"'; ?>                    
-                                id="txtFirstName"                    
-                                maxlength="45"                    
-                                name="txtFirstName"                    
-                                onfocus="this.select()"                    
-                                placeholder="Enter your first name"                    
-                                tabindex="100"                    
-                                type="text"                    
-                                value="<?php print $firstName; ?>"                    
-                        >                    
-                    </p>                    
-                    
-                    <p>   
-                        <label class="required text-field" for="txtEmail">Email</label>
-                            <input <?php 
-                                   if ($firstMistake == "email") print ' autofocus ';
-                                   if ($emailERROR) print 'class="mistake"'; 
-                                   ?>
-                                   id="txtEmail"
-                                   maxlength="45"
-                                   name="txtEmail"
-                                   onfocus="this.select()"
-                                   placeholder="Enter a valid email address"
-                                   tabindex="120"
-                                   type="text"
-                                   value="<?php print $email; ?>"
-                            >
-                    </p>
-                </fieldset> <!-- ends contact -->
+    <form action="<?php print $phpSelf; ?>" id="frmRegister" method="post">
+        <fieldset  class="listbox <?php if ($hikerError) print ' mistake'; ?>">
+		<p>
+            <legend>Select Hiker</legend>
+	            <select id="pmkHikerId" name="pmkHikerId" tabindex="20" >
+					 <?php
+					 $query = "SELECT pmkHikerId, fldFirstName, fldLastName FROM tblHikers";
+					 $records = '';
 
-            <fieldset class="buttons">
-                <legend></legend>
-                <input class="button" id="btnSubmit" name="btnSubmit" tabindex="900" type="submit" value="Register" >
-            </fieldset> <!-- ends buttons -->
+					 if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+    				 $query = $thisDatabaseReader->sanitizeQuery($query);
+    				 $records = $thisDatabaseReader->select($query, '');
+					 }
+
+					 if(is_array($records)) {
+					 	foreach($records as $record) {
+						print '<option';
+						if($hiker==$record['pmkHikerId']){ print " selected"; }
+						print ' value="'.$record['pmkHikerId'].'">'.$record['fldFirstName']." ".$record['fldLastName'].'</option>'."\n\t\t\t\t\t ";
+					 	}
+					 }
+                     print "\n";
+					 ?>
+			   </select>
+        </p>
+		</fieldset>
+
+        <fieldset class="textarea">
+        <p>
+            <label class="required" for="fldDateHiked">Enter Date (yyyy-mm-dd)</label>
+            <textarea <?php if ($hikedateError) print 'class="mistake"'; ?>
+                id="fldDateHiked"
+                name="fldDateHiked"
+                onfocus="this.select()"
+                tabindex="40"><?php print $hikedate; ?></textarea>
+        </p>
+        </fieldset>
+
+        <fieldset class="buttons">
+            <legend></legend>
+            <input class="button" id="btnSubmit" name="btnSubmit" tabindex="900" type="submit" value="Register" >
+        </fieldset> <!-- ends buttons -->
     </form>
-    
+
 <?php
-} // end body submit     
-?>    
+} // end body submit
+?>
 
 </article>
 
 <?php include 'footer.php'; ?>
-
-</body>
-</html>
