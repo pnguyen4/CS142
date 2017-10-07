@@ -30,6 +30,7 @@ $thisURL = $domain . $phpSelf;
 
 $hiker = "";
 $hikedate = "";
+$trail = "";
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -42,6 +43,7 @@ $hikedate = "";
 
 $hikerError = false;
 $hikedateError = false;
+$trailError = false;
 
 ////%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -86,6 +88,9 @@ if (isset($_POST["btnSubmit"])) {
     $hikedate = htmlentities($_POST["fldDateHiked"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $hikedate;
 
+    $trail = htmlentities($_POST["pmkTrailId"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $trail;
+
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
@@ -112,6 +117,14 @@ if (isset($_POST["btnSubmit"])) {
     } elseif (!verifyDate($hikedate)) {
         $errorMsg[] = "Please enter a valid date";
         $hikerError = true;
+    }
+
+    if($trail == "") {
+        $errorMsg[] "Please select a trail";
+        $trailError = true;
+    } elseif(!verifyAlphaNum($trail)) {
+        $errorMsg[] "Please select a trail";
+        $trailError = true;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -276,6 +289,31 @@ if (isset($_POST["btnSubmit"])) {
                 tabindex="40"><?php print $hikedate; ?></textarea>
         </p>
         </fieldset>
+
+    <fieldset class="radio <?php if ($trailError) print ' mistake'; ?>">
+    <legend>Select a Trail</legend>
+    <p>
+    <?php
+        $query = "SELECT pmkTrailsId, fldTrailName FROM tblTrails";
+        $records = '';
+        if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+            $query = $thisDatabaseReader->sanitizeQuery($query);
+            $records = $thisDatabaseReader->select($query, '');
+        }
+        if(is_array($records)) {
+            foreach($records as $record) {
+                print '<label class="radio-field">';
+                print "\n\t\t";
+                print '<input type="radio"';
+                if($trail==$record['pmkTrailsId']){ print ' checked="checked"'; }
+                print ' value="'.$record['pmkTrailsId'].'"'.' name="pmkTrailid">';
+                print "\n\t\t".$record['fldTrailName']."\n\t".'</label>'."\n\t";
+            }
+        }
+        print "\n";
+    ?>
+    </p>
+    </fieldset>
 
         <fieldset class="buttons">
             <legend></legend>
