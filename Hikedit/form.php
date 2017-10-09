@@ -155,27 +155,8 @@ if (isset($_POST["btnSubmit"])) {
         //
         // SECTION: 2e Save Data
         //
-        // This block saves the data to a CSV file.
+        // This block saves the data to a database (formerly csv file).
 
-        /* ** not in this lab
-         // WE WILL BE SAVING INTO A DATABASE
-        $fileExt = ".csv";
-        $myFileName = "data/registration"; // NOTE YOU MUST MAKE THE FOLDER !!!
-        $filename = $myFileName . $fileExt;
-
-        if ($debug){
-            print "\n\n<p>filename is " . $filename;
-        }
-
-        // now we just open the file for append
-        $file = fopen($filename, 'a');
-
-        // write the forms informations
-        fputcsv($file, $dataRecord);
-
-        // close the file
-        fclose($file);
-         */
 		$dataEntered = false;
         try {
             $thisDatabaseWriter->db->beginTransaction();
@@ -213,30 +194,6 @@ if (isset($_POST["btnSubmit"])) {
             if (DEBUG)
                 print "Error!: " . $e->getMessage() . "</br>";
             $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
-        }
-
-
-        //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
-        //
-        // SECTION: 2f Create message
-        //
-        // build a message to display on the screen in section 3a and to mail
-        // to the person filling out the form (section 2g).
-
-        $message = '<h2>Your information.</h2>';
-
-        foreach ($_POST as $htmlName => $value) {
-            $message .= "<!-- <p>";
-
-            // breaks up the form names into words. for example
-            // txtFirstName becomes First Name
-            $camelCase = preg_split('/(?=[A-Z])/', substr($htmlName, 3));
-
-            foreach ($camelCase as $oneWord) {
-                $message .= $oneWord . " ";
-            }
-
-            $message .= " = " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p> -->";
         }
 
     } // end form is valid
