@@ -29,19 +29,18 @@ $thisURL = $domain . $phpSelf;
 // in the order they appear on the form
 
 $hiker = "";
-$hikedate = "";
 $trail = "";
-
-$query = "SELECT pmkTrailsId FROM tblTrails";
-$records = '';
-if ($thisDatabaseReader->querySecurityOk($query, 0)) {
-    $query = $thisDatabaseReader->sanitizeQuery($query);
-    $records = $thisDatabaseReader->select($query, '');
-}
-foreach ($records as $record) {
-    $trail = $record['pmkTrailsId'];
-    break; //fake loop to get a default value
-}
+	$query = "SELECT pmkTrailsId FROM tblTrails";
+	$records = '';
+	if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+	    $query = $thisDatabaseReader->sanitizeQuery($query);
+	    $records = $thisDatabaseReader->select($query, '');
+	}
+	foreach ($records as $record) {
+	    $trail = $record['pmkTrailsId'];
+	    break; //fake loop to get a default value
+	}
+$hikedate = "";
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -53,8 +52,8 @@ foreach ($records as $record) {
 // autofocus to it.
 
 $hikerError = false;
-$hikedateError = false;
 $trailError = false;
+$hikedateError = false;
 
 ////%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -96,11 +95,12 @@ if (isset($_POST["btnSubmit"])) {
     $hiker = htmlentities($_POST["pmkHikerId"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $hiker;
 
+    $trail = htmlentities($_POST["pmkTrailId"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $trail;
+
     $hikedate = htmlentities($_POST["fldDateHiked"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $hikedate;
 
-    $trail = htmlentities($_POST["pmkTrailId"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $trail;
 
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -122,13 +122,6 @@ if (isset($_POST["btnSubmit"])) {
         $hikerError = true;
     }
 
-    if($hikedate == "") {
-        $errorMsg[] = "Please enter a date";
-        $hikedateError = true;
-    } elseif (!verifyDate($hikedate)) {
-        $errorMsg[] = "Please enter a valid date";
-        $hikerError = true;
-    }
         // hopefully this error checking is unnecessary
         // because we have a default value
     if($trail == "") {
@@ -137,6 +130,14 @@ if (isset($_POST["btnSubmit"])) {
     } elseif(!verifyAlphaNum($trail)) {
         $errorMsg[] = "Please select a trail";
         $trailError = true;
+    }
+
+    if($hikedate == "") {
+        $errorMsg[] = "Please enter a date";
+        $hikedateError = true;
+    } elseif (!verifyDate($hikedate)) {
+        $errorMsg[] = "Please enter a valid date";
+        $hikerError = true;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -175,6 +176,44 @@ if (isset($_POST["btnSubmit"])) {
         // close the file
         fclose($file);
          */
+		$dataEntered = false;
+        try {
+            $thisDatabaseWriter->db->beginTransaction();
+
+
+            $query = 'INSERT INTO tblHikersTrails SET ';
+
+            $query .= 'fnkHiker = ?, ';
+            $query .= 'fnkTrail = ?, ';
+            $query .= 'fldDateHiked = ? ';
+
+            if (DEBUG) {
+                $thisDatabaseWriter->TestSecurityQuery($query, 0);
+                print_r($data);
+            }
+
+            if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                $query = $thisDatabaseWriter->sanitizeQuery($query);
+                $results = $thisDatabaseWriter->insert($query, $dataRecord);
+                $primaryKey = $thisDatabaseWriter->lastInsert();
+
+                if (DEBUG) {
+                    print "<p>pmk= " . $primaryKey;
+                }
+            }
+
+            // all sql statements are done so lets commit to our changes
+
+            $dataEntered = $thisDatabaseWriter->db->commit();
+
+            if (DEBUG)
+                print "<p>transaction complete ";
+        } catch (PDOExecption $e) {
+            $thisDatabase->db->rollback();
+            if (DEBUG)
+                print "Error!: " . $e->getMessage() . "</br>";
+            $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
+        }
 
 
         //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -187,7 +226,7 @@ if (isset($_POST["btnSubmit"])) {
         $message = '<h2>Your information.</h2>';
 
         foreach ($_POST as $htmlName => $value) {
-            $message .= "<p>";
+            $message .= "<!-- <p>";
 
             // breaks up the form names into words. for example
             // txtFirstName becomes First Name
@@ -197,7 +236,7 @@ if (isset($_POST["btnSubmit"])) {
                 $message .= $oneWord . " ";
             }
 
-            $message .= " = " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p>";
+            $message .= " = " . htmlentities($value, ENT_QUOTES, "UTF-8") . "</p> -->";
         }
 
     } // end form is valid
