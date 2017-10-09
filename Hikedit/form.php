@@ -32,6 +32,17 @@ $hiker = "";
 $hikedate = "";
 $trail = "";
 
+$query = "SELECT pmkTrailsId FROM tblTrails";
+$records = '';
+if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+    $query = $thisDatabaseReader->sanitizeQuery($query);
+    $records = $thisDatabaseReader->select($query, '');
+}
+foreach ($records as $record) {
+    $trail = $record['pmkTrailsId'];
+    break; //fake loop to get a default value
+}
+
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION: 1d form error flags
@@ -118,13 +129,14 @@ if (isset($_POST["btnSubmit"])) {
         $errorMsg[] = "Please enter a valid date";
         $hikerError = true;
     }
-
+        // hopefully this error checking is unnecessary
+        // because we have a default value
     if($trail == "") {
-        $errorMsg[] "Please select a trail";
-        $trailError = true;
+        $errorMsg[] = "Please select a trail";
+        $hikerError = true;
     } elseif(!verifyAlphaNum($trail)) {
-        $errorMsg[] "Please select a trail";
-        $trailError = true;
+        $errorMsg[] = "Please select a trail";
+        $hikerError = true;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -306,7 +318,7 @@ if (isset($_POST["btnSubmit"])) {
                 print "\n\t\t";
                 print '<input type="radio"';
                 if($trail==$record['pmkTrailsId']){ print ' checked="checked"'; }
-                print ' value="'.$record['pmkTrailsId'].'"'.' name="pmkTrailid">';
+                print ' value="'.$record['pmkTrailsId'].'"'.' name="pmkTrailId">';
                 print "\n\t\t".$record['fldTrailName']."\n\t".'</label>'."\n\t";
             }
         }
