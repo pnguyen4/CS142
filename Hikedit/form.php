@@ -133,10 +133,10 @@ if (isset($_POST["btnSubmit"])) {
         // because we have a default value
     if($trail == "") {
         $errorMsg[] = "Please select a trail";
-        $hikerError = true;
+        $trailError = true;
     } elseif(!verifyAlphaNum($trail)) {
         $errorMsg[] = "Please select a trail";
-        $hikerError = true;
+        $trailError = true;
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
