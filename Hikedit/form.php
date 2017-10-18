@@ -6,11 +6,11 @@ include 'top.php';
 //
 // SECTION: 1a.
 // We print out the post array so that we can see our form is working.
-// if ($debug){  // later you can uncomment the if statement
+ if ($debug){  // later you can uncomment the if statement
     print '<p>Post Array:</p><pre>';
     print_r($_POST);
     print '</pre>';
-// }
+ }
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -19,7 +19,6 @@ include 'top.php';
 // define security variable to be used in SECTION 2a.
 
 $thisURL = $domain . $phpSelf;
-
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -100,8 +99,6 @@ if (isset($_POST["btnSubmit"])) {
 
     $hikedate = htmlentities($_POST["fldDateHiked"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $hikedate;
-
-
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
@@ -262,8 +259,8 @@ if (isset($_POST["btnSubmit"])) {
 
     <form action="<?php print $phpSelf; ?>" id="frmRegister" method="post">
         <fieldset  class="listbox <?php if ($hikerError) print ' mistake'; ?>">
-		<p>
             <legend>Select Hiker</legend>
+                <p>
 	            <select id="pmkHikerId" name="pmkHikerId" tabindex="20" >
 					 <?php
 					 $query = "SELECT pmkHikerId, fldFirstName, fldLastName FROM tblHikers";
@@ -284,17 +281,16 @@ if (isset($_POST["btnSubmit"])) {
                      print "\n";
 					 ?>
 			   </select>
-        </p>
+                </p>
 		</fieldset>
 
         <fieldset class="textarea">
-        <p>
             <label class="required" for="fldDateHiked">Enter Date (yyyy-mm-dd)</label>
+        <p>
             <textarea <?php if ($hikedateError) print 'class="mistake"'; ?>
                 id="fldDateHiked"
                 name="fldDateHiked"
-                onfocus="this.select()"
-                tabindex="40"><?php print $hikedate; ?></textarea>
+                onfocus="this.select()" tabindex="40"><?php print $hikedate; ?></textarea>
         </p>
         </fieldset>
 
