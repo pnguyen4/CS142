@@ -1,5 +1,5 @@
 <?php
-define('DATABASE_NAME', 'PNGUYEN4_lab4');
+define('DATABASE_NAME', 'PNGUYEN4_Hikedit');
 define('DATABASE_READER', 'pnguyen4_reader');
 define('DATABASE_READER_PWD', 'r');
 define('DATABASE_WRITER_PWD', 'w');
