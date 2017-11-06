@@ -32,7 +32,7 @@ if (is_array($records)) {
 		. " " . $record['fldHikingTime'] . " " . $record['fldVerticalRise'] . " " .
 		$record['fldRating'] . '</p>';
     if($isAdmin) {
-    print '<a href="">EDIT</a>';
+    print '<a href="form-trails.php?Id='.$record['pmkTrailsId'].'">EDIT</a>';
 }
     }
 }

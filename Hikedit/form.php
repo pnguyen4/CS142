@@ -287,10 +287,12 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset class="textarea">
             <label class="required" for="fldDateHiked">Enter Date (yyyy-mm-dd)</label>
         <p>
-            <textarea <?php if ($hikedateError) print 'class="mistake"'; ?>
+            <input type="text" <?php if ($hikedateError) print 'class="mistake"'; ?>
                 id="fldDateHiked"
                 name="fldDateHiked"
-                onfocus="this.select()" tabindex="40"><?php print $hikedate; ?></textarea>
+                value="<?php print $hikedate; ?>"
+                onfocus="this.select()" tabindex="40">
+            </input>
         </p>
         </fieldset>
 

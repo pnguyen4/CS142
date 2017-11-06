@@ -34,5 +34,10 @@ function verifyDate ($testString) {
     return false;
 }
 
+function verifyTime ($testString) {
+    $regex = '#^([01]?[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$#';
+    return (preg_match($regex, $testString));
+}
+
 print "\n<!--  END include validation-functions -->\n";
 ?>
