@@ -266,7 +266,7 @@ if (isset($_POST["btnSubmit"])) {
 
                         if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
                             $query = $thisDatabaseWriter->sanitizeQuery($query);
-                            $results = $thisDatabaseWriter->update($query, $thisquery);
+                            $results = $thisDatabaseWriter->insert($query, $thisquery);
                             print_r($results);
                         }
                     }
@@ -286,15 +286,19 @@ if (isset($_POST["btnSubmit"])) {
                         print "<p>pmk= " . $primaryKey;
                     }
                 }
-                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])) {
-                    $query = 'INSERT INTO tblTrailsTags SET ';
-                    $query .= 'pfkTrailsId = ?,';
-                    $query .= 'pfkTag = ?';
-                    $thisquery = array($tags['pmkTag'], $trailId);
 
-                    if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
-                        $query = $thisDatabaseWriter->sanitizeQuery($query);
-                        $results = $thisDatabaseWriter->update($query, $thisquery);
+                foreach($tagRecord as $tags) {
+                    if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])) {
+                        $query = 'INSERT INTO tblTrailsTags SET ';
+                        $query .= 'pfkTrailsId = ?,';
+                        $query .= 'pfkTag = ?';
+                        $thisquery = array($primaryKey, $tags['pmkTag']);
+
+                        if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                            $query = $thisDatabaseWriter->sanitizeQuery($query);
+                            $results = $thisDatabaseWriter->insert($query, $thisquery);
+                            print_r($results);
+                        }
                     }
                 }
             }
