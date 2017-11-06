@@ -10,11 +10,13 @@
         }
         print '><a href="index.php">Home</a></li>';
 
+        if($isAdmin) {
         print '<li ';
         if ($PATH_PARTS['filename'] == 'form-hiker-trails') {
             print ' class="activePage" ';
         }
         print '><a href="form-hiker-trails.php">Form1</a></li>';
+        }
 
         if($isAdmin) {
             print '<li ';

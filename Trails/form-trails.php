@@ -1,12 +1,13 @@
 <?php
 include 'top.php';
+if($isAdmin) {
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION: 1 Initialize variables
 //
 // SECTION: 1a.
 // We print out the post array so that we can see our form is working.
- if ($debug){  // later you can uncomment the if statement
+ if (true){  // later you can uncomment the if statement
     print '<p>Post Array:</p><pre>';
     print_r($_POST);
     print '</pre>';
@@ -29,9 +30,15 @@ $thisURL = $domain . $phpSelf;
 // Initialize variables one for each form element
 // in the order they appear on the form
 
+$query = 'SELECT pmkTag FROM tblTags';
+if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+    $query = $thisDatabaseReader->sanitizeQuery($query);
+    $tagRecord = $thisDatabaseReader->select($query, '');
+}
+
+$tagList = array();
 if(isset($_GET["Id"])) {
     $trailId = (int) htmlentities($_GET["Id"], ENT_QUOTES, "UTF-8");
-
     $query = 'SELECT fldTrailName, fldTotalDistance, fldHikingTime, fldVerticalRise, fldRating';
     $query .= ' FROM tblTrails WHERE pmkTrailsId = ?';
 
@@ -48,6 +55,16 @@ if(isset($_GET["Id"])) {
     $verticalRise = $trail[0]["fldVerticalRise"];
     $rating = $trail[0]["fldRating"];
     //print($trailName);
+
+    $query = 'SELECT pfkTag FROM tblTrailsTags WHERE pfkTrailsId = ?';
+	if ($thisDatabaseReader->querySecurityOk($query, 1)) {
+	    $query = $thisDatabaseReader->sanitizeQuery($query);
+	    $updateTagList = $thisDatabaseReader->select($query, $data);
+	}
+    foreach($updateTagList as $temp) {
+        array_push($tagList, $temp['pfkTag']);
+    }
+    //print_r($tagList);
 } else {
 $trailId = -1;
 $trailName = "";
@@ -227,12 +244,32 @@ if (isset($_POST["btnSubmit"])) {
             if($update) {
                 $query .= 'WHERE pmkTrailsId = ?';
                 $dataRecord[] = $trailId;
-                print "<p>Query: " . $query;
 
                 if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
                     $query = $thisDatabaseWriter->sanitizeQuery($query);
                     $results = $thisDatabaseWriter->update($query, $dataRecord);
-                    print "<p>Results: " . $results;
+                }
+
+                $query = 'DELETE FROM tblTrailsTags WHERE pfkTrailsId = ?';
+                $thisquery = array($trailId);
+                if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
+                    $query = $thisDatabaseWriter->sanitizeQuery($query);
+                    $results = $thisDatabaseWriter->delete($query, $thisquery);
+                }
+
+                foreach($tagRecord as $tags) {
+                    if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])) {
+                        $query = 'INSERT INTO tblTrailsTags SET ';
+                        $query .= 'pfkTrailsId = ?,';
+                        $query .= 'pfkTag = ?';
+                        $thisquery = array($trailId, $tags['pmkTag']);
+
+                        if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                            $query = $thisDatabaseWriter->sanitizeQuery($query);
+                            $results = $thisDatabaseWriter->update($query, $thisquery);
+                            print_r($results);
+                        }
+                    }
                 }
             } else {
                 if (DEBUG) {
@@ -247,6 +284,17 @@ if (isset($_POST["btnSubmit"])) {
 
                     if (DEBUG) {
                         print "<p>pmk= " . $primaryKey;
+                    }
+                }
+                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])) {
+                    $query = 'INSERT INTO tblTrailsTags SET ';
+                    $query .= 'pfkTrailsId = ?,';
+                    $query .= 'pfkTag = ?';
+                    $thisquery = array($tags['pmkTag'], $trailId);
+
+                    if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                        $query = $thisDatabaseWriter->sanitizeQuery($query);
+                        $results = $thisDatabaseWriter->update($query, $thisquery);
                     }
                 }
             }
@@ -311,7 +359,7 @@ if (isset($_POST["btnSubmit"])) {
             print "</div>\n";
         }
 
-		//####################################
+        //####################################
         //
         // SECTION 3c html Form
         //
@@ -325,10 +373,8 @@ if (isset($_POST["btnSubmit"])) {
             <?php if($emailERROR) print 'class="mistake"'; ?>
             this prints out a css class so that we can highlight the background etc. to
             make it stand out that a mistake happened here.
-       */
-    ?>
-
-    <!-- <p>Trail Name: <?php print($trailName)?></p> --!>
+         */
+?>
 
     <form action="<?php print $phpSelf; ?>" id="frmRegister" method="post">
 
@@ -384,6 +430,40 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
 
+        <fieldset>
+        <legend>Select Tags (choose all that apply)</legend>
+        <p>
+        <?php
+        if($update) {
+            foreach($tagRecord as $tags) {
+                $output = '<label><input ';
+                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])]) || in_array($tags['pmkTag'], $tagList)) {
+                    $output .= ' checked ';
+                }
+                $output .= 'id="'.$tags['pmkTag'].'" name="';
+                $output .= $tags['pmkTag'].'" type="checkbox" value="';
+                $output .= $tags['pmkTag'].'">'.$tags['pmkTag'].'</label>';
+                print $output;
+                print "\n";
+            }
+        } else {
+            foreach($tagRecord as $tags) {
+                $output = '<label><input ';
+                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])){
+                    $output .= ' checked ';
+                }
+                $output .= 'id="'.$tags['pmkTag'].'" name="';
+                $output .= $tags['pmkTag'].'" type="checkbox" value="';
+                $output .= $tags['pmkTag'].'">'.$tags['pmkTag'].'</label>';
+                print $output;
+                print "\n";
+            }
+        }
+        ?>
+
+        </p>
+        </fieldset>
+
         <fieldset class="buttons">
             <legend></legend>
             <input class="button" id="btnSubmit" name="btnSubmit" tabindex="900" type="submit" value="Submit" >
@@ -392,6 +472,7 @@ if (isset($_POST["btnSubmit"])) {
 
 <?php
 } // end body submit
+}
 ?>
 
 </article>

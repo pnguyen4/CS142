@@ -1,5 +1,6 @@
 <?php
 include 'top.php';
+if($isAdmin) {
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // SECTION: 1 Initialize variables
@@ -330,6 +331,7 @@ if (isset($_POST["btnSubmit"])) {
 
 <?php
 } // end body submit
+}
 ?>
 
 </article>
