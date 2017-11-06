@@ -120,6 +120,7 @@ if (isset($_POST["btnSubmit"])) {
     if($trailId > 0) {
         $update = true;
     }
+
     $trailName = htmlentities($_POST["fldTrailName"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $trailName;
 
