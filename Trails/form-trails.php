@@ -267,7 +267,7 @@ if (isset($_POST["btnSubmit"])) {
                         if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
                             $query = $thisDatabaseWriter->sanitizeQuery($query);
                             $results = $thisDatabaseWriter->insert($query, $thisquery);
-                            print_r($results);
+                            //print_r($results);
                         }
                     }
                 }
