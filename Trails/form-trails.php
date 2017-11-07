@@ -7,7 +7,7 @@ if($isAdmin) {
 //
 // SECTION: 1a.
 // We print out the post array so that we can see our form is working.
- if (true){  // later you can uncomment the if statement
+ if ($debug){  // later you can uncomment the if statement
     print '<p>Post Array:</p><pre>';
     print_r($_POST);
     print '</pre>';
