@@ -20,9 +20,9 @@
 
         // This if statement allows us in the classroom to see what our variables are
         // This is NEVER done on a live site
-        if (isset($_GET["debug"])) {
-            $debug = true;
-        }
+        //if (isset($_GET["debug"])) {
+        //    $debug = true;
+        //}
 // %^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
 // PATH SETUP
