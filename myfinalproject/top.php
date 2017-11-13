@@ -4,7 +4,7 @@
         <title>The White Lotus</title>
         <meta charset="utf-8">
         <meta name="author" content="Me">
-        <meta name="description" content="exquisite tea selection">
+        <meta name="description" content="Make Tea Not War">
 
         <meta name="viewport" content="width=device-width, initial-scale=1">
 

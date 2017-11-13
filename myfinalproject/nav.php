@@ -10,14 +10,38 @@
         }
         print '><a href="index.php">Home</a></li>';
 
-        if($isAdmin) {
+        print '<li ';
+        if ($PATH_PARTS['filename'] == 'teas') {
+            print ' class="activePage" ';
         }
+        print '><a href="teas.php">Teas</a></li>';
+
+        print '<li ';
+        if ($PATH_PARTS['filename'] == 'teaware') {
+            print ' class="activePage" ';
+        }
+        print '><a href="teaware.php">Teaware</a></li>';
+
+        print '<li ';
+        if ($PATH_PARTS['filename'] == 'contact') {
+            print ' class="activePage" ';
+        }
+        print '><a href="contact.php">Contact</a></li>';
+
+        print '<li ';
+        if ($PATH_PARTS['filename'] == 'cart') {
+            print ' class="activePage" ';
+        }
+        print '><a href="cart.php">View Cart</a></li>';
 
         print '<li ';
         if ($PATH_PARTS['filename'] == 'tables') {
             print ' class="activePage" ';
         }
         print '><a href="tables.php">Tables</a></li>';
+
+        if($isAdmin) {
+        }
 
         ?>
     </ol>
