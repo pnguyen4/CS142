@@ -26,8 +26,10 @@ if ($debug){  // later you can uncomment the if statement
     if ($query != '') {
         foreach ($records as $record) {
             print "<figure>";
-            print '<img src='.$record['fldImgUrl'].' alt="'.$record['fldProductName'].'width="100" height="100">';
-            print '<figcaption>'.$record['fldProductName'].' - $'.$record['fldPrice'].'</figcaption>';
+            print '<img src='.$record['fldImgUrl'].' alt="'.
+                $record['fldProductName'].'width="100" height="100">';
+            print '<figcaption><a href="productpage.php?Id='.$record['pmkProductId']
+            .'">'.$record['fldProductName'].' - $'.$record['fldPrice'].'</a></figcaption>';
             $description = $record['fldDescription'];
             print "</figure>";
         }
@@ -35,6 +37,9 @@ if ($debug){  // later you can uncomment the if statement
     ?>
 
     </div> <!--end main-->
+
+    <div id="padding">
+    </div> <!-- end padding, this one is for css reasons only-->
 
     <div id="sidebar">
     <form action="<?php print $phpSelf; ?>" id="frmSidebar" method="post">
@@ -56,9 +61,6 @@ if ($debug){  // later you can uncomment the if statement
         </li>
         <li <?php if(isset($_POST["puerhtea"])) print 'class="activesidebar"'; ?>>
             <input class="sidebarbutton" type="submit" name="puerhtea" value="puerh tea"/>
-        </li>
-        <li <?php if(isset($_POST["herbaltea"])) print 'class="activesidebar"'; ?>>
-            <input class="sidebarbutton" type="submit" name="herbaltea" value="herbal tea"/>
         </li>
     </ul>
     </form>

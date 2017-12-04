@@ -12,19 +12,25 @@ article{
 figure{
     border: thin solid darkslategray;
     padding: 0.5em;
-    margin: 0.5em;
+    margin: 1em;
     width: 25%;
     float: left;
-
+    background-color: #EFEFEE;
 }
 
 figure > * {
     margin: 0 auto;
     display: block;
     text-align: center;
+    padding: .5em 0 .5em 0;
+}
+
+html {
+    height: 100%;
 }
 
 footer{
+    text-align: bottom;
     clear: both;
 }
 
@@ -49,6 +55,22 @@ header h1{
     padding-top: 75px;
 }
 
+#productname {
+    margin: .5em;
+    font-size: 2em;
+}
+
+#productimg {
+    width: 25%;
+    margin: 2em;
+    padding-right: 2em;
+    float: left;
+}
+
+#description {
+    padding: 1em;
+}
+
 img{
     border-radius: 0.4em;
     max-width: 100%
@@ -69,6 +91,7 @@ body {
     width: 70%;
     margin: 0 auto;
     background-color: #EFEFEE;
+    display: table;
 }
 
 /*------------------------   classes           ------------------------------ */
@@ -90,6 +113,18 @@ body {
 
 #wrapper, footer {
     background-color: #FFFFFF;
+}
+
+footer {
+    height: 100%
+}
+
+footer > p {
+    margin: 2em;
+}
+
+#wrapper, header, footer, #greeter {
+    display: table-row;
 }
 
 #greeter {
@@ -117,12 +152,19 @@ body {
 }
 
 #main {
+    background-color: #FFFFFF;
     width: 80%;
     float: right;
 }
 
+#padding {
+    background-color: #FFFFFF;
+    width: 2%;
+    float: center;
+}
+
 #sidebar {
-    width: 20%;
+    width: 18%;
     float: left;
     background-color: #999999;
 }
@@ -135,9 +177,21 @@ body {
     border:2px solid black;
 }
 
-#index1, #index2{
-    margin: 2% 1% 5% 1%;
-    padding: 1% 1% 1% 1%;
+#index1{
+    margin: 5% 1% 1% 1%;
+    padding: 1% 5% 1% 5%;
+    background-color: #FFFFFF;
+}
+
+#index2{
+    margin: 5% 0% 1% 1%;
+    padding: 1% 5% 1% 5%;
+    background-color: #FFFFFF;
+}
+
+#index3{
+    margin: 1% 1% 1% 1%;
+    padding: 1% 4% 1% 4%;
     background-color: #FFFFFF;
 }
 
