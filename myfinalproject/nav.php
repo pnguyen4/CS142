@@ -32,7 +32,13 @@
         if ($PATH_PARTS['filename'] == 'cart') {
             print ' class="activePage" ';
         }
-        print '><a href="cart.php">View Cart</a></li>';
+        $count = 0;
+        if(isset($_SESSION['cart'])) {
+            foreach($_SESSION['cart'] as $id => $value) {
+                $count += $value['quantity'];
+            }
+        }
+        print '><a href="cart.php">View Cart ('.$count.')</a></li>';
 
         print '<li ';
         if ($PATH_PARTS['filename'] == 'tables') {

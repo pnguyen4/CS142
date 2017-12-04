@@ -11,7 +11,7 @@ $query = 'SELECT * FROM tblTrails';
 
 // NOTE: The full method call would be:
 //           $thisDatabaseReader->querySecurityOk($query, 0, 0, 0, 0, 0)
-if ($thisDatabaseReader->querySecurityOk($query, 0)) {
+if ($thisDatabaseReader->querySecurityOk($query, 1)) {
     $query = $thisDatabaseReader->sanitizeQuery($query);
     $records = $thisDatabaseReader->select($query, '');
 

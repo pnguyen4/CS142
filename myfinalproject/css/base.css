@@ -1,38 +1,49 @@
-/* 
-    Created on : Jun 10, 2015, 10:27:26 AM
-    Author     : Robert Erickson
-*/
 @import url('reset.css');
-/*------------------------   standard elements  ----------------------------- */
+
 body{
     margin: 0 5% 0 5%;
 }
+
 article{
     padding: 2em;
 }
 
-figcaption {
-    color: #839e99;
-    font-style: italic;
-    text-align: center;
-}
 
 figure{
     border: thin solid darkslategray;
-    border-radius: 0.4em;
     padding: 0.5em;
+    margin: 0.5em;
+    width: 25%;
+    float: left;
+
 }
+
+figure > * {
+    margin: 0 auto;
+    display: block;
+    text-align: center;
+}
+
 footer{
     clear: both;
 }
 
-h1, h2, h3, h4, h5, h6{
+h1, h3, h4, h5, h6{
     padding: 1.5em 0 .8em 0;
+}
+
+h2 {
+    padding: 1.6em 0 .4em 0;
 }
 header{
     overflow: auto; /* forces header to fit to figure */
 }
 
+footer {
+    height: 40px;
+    margin-top: -20px;
+    position: relative;
+}
 header h1{
     padding-bottom: 2em;
     padding-top: 75px;
@@ -44,22 +55,23 @@ img{
 }
 
 p{
-    padding: 1em 0 1em 0;   
+    padding: .5em 0 1em 0;
+    line-height: 18px;
 }
+
 section{
     padding: 2em;
-    width: 40%;  
+    width: 40%;
+}
+
+body {
+    height: 100%;
+    width: 70%;
+    margin: 0 auto;
+    background-color: #EFEFEE;
 }
 
 /*------------------------   classes           ------------------------------ */
-
-p:nth-child(odd){
-    background-color: whitesmoke;
-}
-
-p:nth-child(even){
-    background-color: lightcyan;
-}
 
 .float_right {
     float: right;
@@ -67,7 +79,6 @@ p:nth-child(even){
 }
 
 .float_left {
-    border: thin solid darkslategray;
     float: left;
     margin: 1em 1em 1em 0;
     padding: 0.5em;
@@ -77,6 +88,80 @@ p:nth-child(even){
     width: 150px;
 }
 
+#wrapper, footer {
+    background-color: #FFFFFF;
+}
+
+#greeter {
+    padding-top: 1em;
+    padding-bottom: 0em;
+    font-size: 48px;
+    text-align: center;
+}
+
+#indextea {
+    width: 15%;
+    margin: 2% 2% 2% 0%;
+    padding: 2% 2% 2% 2%;
+    float: left;
+    border:2px solid black;
+}
+
+.sidebarbutton {
+    border:0;
+    background-color:transparent;
+    color: white;
+    text-decoration:underline;
+    font-size: 24px;
+    padding: .5em 0em .5em 1em;
+}
+
+#main {
+    width: 80%;
+    float: right;
+}
+
+#sidebar {
+    width: 20%;
+    float: left;
+    background-color: #999999;
+}
+
+#indexcup {
+    width: 15%;
+    margin: 2% 2% 2% 2%;
+    padding: 2% 2% 2% 2%;
+    float: right;
+    border:2px solid black;
+}
+
+#index1, #index2{
+    margin: 2% 1% 5% 1%;
+    padding: 1% 1% 1% 1%;
+    background-color: #FFFFFF;
+}
+
+ul {
+    padding: 0em;
+    list-style-type: none;
+}
+
+nav {
+    background-color: #222222;
+    padding: 1em 1em 1em 1em;
+}
+
+nav a{
+    color: white;
+    text-decoration: none;
+    padding: .6em .1em .6em .1em;
+}
+
+nav a:hover, li.activePage a, .activesidebar  {
+    background-color: #444444;
+
+
+}
 /*------------------------   nav section only  ------------------------------ */
 nav ol li{
     display: inline-block;
@@ -84,17 +169,17 @@ nav ol li{
     padding-right: 2em;
 }
 
-/*------------------------   table page  only  ------------------------------ */
 #table aside{
-    height: 600px; 
-    float: left; 
-    overflow: auto; 
-    margin-left: 2em;            
+    height: 600px;
+    float: left;
+
+    overflow: auto;
+    margin-left: 2em;
 }
 #table section{
-    width: 35%; 
-    height: 600px; 
-    float: left; 
+    width: 35%;
+    height: 600px;
+    float: left;
     overflow: auto;
 }
 #table table{
@@ -111,7 +196,3 @@ nav ol li{
     text-align: left;
 }
 
-body p.noticeMe{
-    background-color: #cc0033;
-    color: wheat;
-}
