@@ -62,12 +62,17 @@ if(isset($_SESSION['cart'])) {
             <td class="cartitem"><input type="text" name="quantity[<?php print $record['pmkProductId'] ?>]" size="5"
             value="<?php print $_SESSION['cart'][$record['pmkProductId']]['quantity'] ?>"/></td>
         </tr>
-        <?php }} else { print '<td colspan="4">Sorry, Your Shopping Cart is empty.</td>'; } ?>
-        <tr>
-            <td colspan="4">Subtotal: <?php print $totalprice ?></td>
-        </tr>
+        <?php }} else { print '<td colspan="4">Sorry, Your Shopping Cart is as empty as this cup.</td>'; } ?>
+    <?php
+    if(isset($_SESSION['cart'])) {
+        print '<tr><td colspan="4">Subtotal: <?php print $totalprice ?></td></tr>';
+    }?>
     </table>
-    <button type="submit" name="update">Update Cart</button>
+    <?php
+    if(isset($_SESSION['cart'])) {
+    print '<button type="submit" name="update">Update Cart</button>';
+    } else { print '<img src="images/cup.jpg">'; }
+    ?>
 </div>
 
 <?
