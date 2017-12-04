@@ -26,8 +26,8 @@ if ($debug){  // later you can uncomment the if statement
     if ($query != '') {
         foreach ($records as $record) {
             print "<figure>";
-            print '<img src='.$record['fldImgUrl'].' alt="'.
-                $record['fldProductName'].'width="100" height="100">';
+            print '<img class="teas" src='.$record['fldImgUrl'].' alt="'.
+                $record['fldProductName'].'">';
             print '<figcaption><a href="productpage.php?Id='.$record['pmkProductId']
             .'">'.$record['fldProductName'].' - $'.$record['fldPrice'].'</a></figcaption>';
             $description = $record['fldDescription'];

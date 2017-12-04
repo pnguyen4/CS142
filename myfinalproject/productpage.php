@@ -6,8 +6,12 @@ if ($debug) {
     print_r($_POST);
     print '</pre>';
 }
+//print_r($_SESSION);
+
+//session_destroy();
 
 if (isset($_GET["Id"])) {
+    ///////////////////////////////////////////////////////////////////
     $productId = (int) htmlentities($_GET["Id"], ENT_QUOTES, "UTF-8");
     $query = "SELECT * FROM tblProducts WHERE pmkProductId = ?";
 
@@ -23,6 +27,19 @@ if (isset($_GET["Id"])) {
     $description = $record[0]["fldDescription"];
     $image = $record[0]["fldImgUrl"];
 
+    if(isset($_GET['action']) && $_GET['action']=="add"){
+        if(isset($_SESSION['cart'][$productId])){
+            $_SESSION['cart'][$productId]['quantity']++;
+        } else{
+            $_SESSION['cart'][$productId] = array("quantity" => 1, "price" => $price);
+        }
+        //redirect to eliminate the issue of adding items to cart when refreshing and having the cart # update
+        // in a more straightforward manner. This is done by returning to productpage with some gets removed
+        // from url.
+        header("Location: http://pnguyen4.w3.uvm.edu/cs148/dev/myfinalproject/productpage.php?Id=".$productId);
+        die();
+    }
+
     print('
     <div id="wrapper">
         <div id="index3">
@@ -32,8 +49,10 @@ if (isset($_GET["Id"])) {
         <h2>In Stock: '.$instock.'</h2>
         </div>
         <div id="index2">
+        <h2 style="padding: 1em;">Description:</h2>
         <p id="description">'.$description.'</p>
         </div>
+        <a href="productpage.php?page=products&action=add&Id='.$productId.'">Add to cart</a>
     <div><!--end wrapper-->
     ');
 } else {
