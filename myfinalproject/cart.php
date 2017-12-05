@@ -73,6 +73,15 @@ if(isset($_SESSION['cart'])) {
     print '<button type="submit" name="update">Update Cart</button>';
     } else { print '<img src="images/cup.jpg">'; }
     ?>
+</form>
+<?php
+ if(isset($_SESSION['cart'])) {
+print '
+<form action="checkout.php">
+    <input type="submit" value="checkout" />
+</form>';
+ }
+?>
 </div>
 
 <?

@@ -358,47 +358,13 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldShipCountry">Zip Code</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php //if (false) print 'class="mistake"';?>
                     id="fldShipZip"
                     name="fldShipZip"
-                    value="<?php print $shipZip;?>">
+                    value="<?php //print $shipZip;?>">
             </p>
         </fieldset>
         -->
-
-        <fieldset>
-        <legend>Select Tags (choose all that apply)</legend>
-        <p>
-        <?php
-        if($update) {
-            foreach($tagRecord as $tags) {
-                $output = '<label><input ';
-                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])]) || in_array($tags['pmkTag'], $tagList)) {
-                    $output .= ' checked ';
-                }
-                $output .= 'id="'.$tags['pmkTag'].'" name="';
-                $output .= $tags['pmkTag'].'" type="checkbox" value="';
-                $output .= $tags['pmkTag'].'">'.$tags['pmkTag'].'</label>';
-                print $output;
-                print "\n";
-            }
-        } else {
-            foreach($tagRecord as $tags) {
-                $output = '<label><input ';
-                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])){
-                    $output .= ' checked ';
-                }
-                $output .= 'id="'.$tags['pmkTag'].'" name="';
-                $output .= $tags['pmkTag'].'" type="checkbox" value="';
-                $output .= $tags['pmkTag'].'">'.$tags['pmkTag'].'</label>';
-                print $output;
-                print "\n";
-            }
-        }
-        ?>
-
-        </p>
-        </fieldset>
 
         <fieldset class="buttons">
             <legend></legend>
@@ -408,7 +374,7 @@ if (isset($_POST["btnSubmit"])) {
 
 </div>
 
-<?
+<?php
     }
 include 'footer.php';
 ?>
