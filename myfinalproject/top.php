@@ -58,7 +58,7 @@
         // notice this if statemtent only includes the functions if it is
         // form page. A common mistake is to make a form and call the page
         // join.php which means you need to change it below (or delete the if)
-        if ($path_parts['filename'] == "" ||
+        if ($path_parts['filename'] == "checkout" ||
             $path_parts['filename'] == "") {
             print "\n<!-- include form libraries -->\n";
             include "lib/validation-functions.php";

@@ -1,4 +1,4 @@
-3 related tables
+# 3 related tables
 
 allow admin to do following:
 add new records
@@ -8,14 +8,14 @@ delete records
 need minimum of one form:
 
 insert data into at least two tables
-one text box for a users email address
-two additional text boxes
+# one text box for a users email address
+# two additional text boxes
 one list box
 three check boxes
-three radio buttons
-submit button
-field sets and legends as needed
-display erors
+# three radio buttons
+# submit button
+# field sets and legends as needed
+# display erors
 should email person who filled out form (and save to database)
 
-minimum of 6 web pages
+# minimum of 6 web pages

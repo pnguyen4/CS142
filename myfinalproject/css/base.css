@@ -211,6 +211,10 @@ footer > p {
     margin: 0 auto;
 }
 
+.mistake {
+    background-color: pink;
+}
+
 ul {
     padding: 0em;
     list-style-type: none;

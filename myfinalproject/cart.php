@@ -56,7 +56,7 @@ if(isset($_SESSION['cart'])) {
             $totalprice += $_SESSION['cart'][$record['pmkProductId']]['quantity']*$record['fldPrice'];
     ?>
         <tr>
-            <td width="110" class="cartitem"><img class="cartimg" src="<?php print $record['fldImgUrl']?>"</td>
+            <td width="110" class="cartitem"><img class="cartimg" src="<?php print $record['fldImgUrl']?>"></td>
             <td class="cartitem"><?php print $record['fldProductName'] ?></td>
             <td class="cartitem"><?php print $record['fldPrice'] ?></td>
             <td class="cartitem"><input type="text" name="quantity[<?php print $record['pmkProductId'] ?>]" size="5"
@@ -65,8 +65,7 @@ if(isset($_SESSION['cart'])) {
         <?php }} else { print '<td colspan="4">Sorry, Your Shopping Cart is as empty as this cup.</td>'; } ?>
     <?php
     if(isset($_SESSION['cart'])) {
-        print '<tr><td colspan="4">Subtotal: <?php print $totalprice ?></td></tr>';
-    }?>
+        print '<tr><td colspan="4">Subtotal:'.$totalprice; }?></td></tr>
     </table>
     <?php
     if(isset($_SESSION['cart'])) {
@@ -84,6 +83,6 @@ print '
 ?>
 </div>
 
-<?
+<?php
 include 'footer.php';
 ?>

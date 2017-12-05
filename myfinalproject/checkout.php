@@ -39,6 +39,10 @@ $billAddress = "";
 $billCity = "";
 $billZip = "";
 $email = "";
+$cardNumber = "";
+$expDate = "";
+$cvv2 = "";
+$shipRate = "";
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -59,6 +63,10 @@ $billAddressERROR = "";
 $billCityERROR = "";
 $billZipERROR = "";
 $emailERROR = "";
+$cardNumberERROR = "";
+$expDateERROR = "";
+$cvv2ERROR = "";
+$shipRateERROR = "";
 
 ////%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -125,6 +133,18 @@ if (isset($_POST["btnSubmit"])) {
     $email = htmlentities($_POST["fldEmail"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $email;
 
+    $cardNumber = htmlentities($_POST["fldCardNum"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $cardNumber;
+
+    $expDate = htmlentities($_POST["fldExpDate"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $expDate;
+
+    $cvv2 = htmlentities($_POST["fldCvv2"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $cvv2;
+
+    $shipRate = htmlentities($_POST["fldShipRate"], ENT_QUOTES, "UTF-8");
+    $dataRecord[] = $shipRate;
+
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
     //
     // SECTION: 2c Validation
@@ -136,14 +156,76 @@ if (isset($_POST["btnSubmit"])) {
     // will be in the order they appear. errorMsg will be displayed on the form
     // see section 3b. The error flag ($emailERROR) will be used in section 3c.
 
-        // hopefully this error checking is unnecessary
-        // because we have a default value
-    if($trailName == "") {
-        $errorMsg[] = "Please enter trail name";
-        $trailError = true;
-    } elseif(!verifyAlphaNum($trailName)) {
-        $errorMsg[] = "Your trail name has an extra character";
-        $trailNameERROR = true;
+    if($shipName == "") {
+        $errorMsg[] = "Please enter a Name for this shipping address.";
+        $shipNameERROR = true;
+    }
+
+    if($shipAddress == "") {
+        $errorMsg[] = "Please enter an address line for this shipping address.";
+        $shipAddressERROR= true;
+    }
+
+    if($shipCity == "") {
+        $errorMsg[] = "Please enter a city name for this shipping address.";
+        $shipCityERROR= true;
+    }
+
+    if($shipZip == "") {
+        $errorMsg[] = "Please enter a zip code for this shipping address.";
+        $shipZipERROR = true;
+    }
+
+    if($billName == "") {
+        $errorMsg[] = "Please enter a Name for this billing address.";
+        $billNameERROR = true;
+    }
+
+    if($billAddress == "") {
+        $errorMsg[] = "Please enter an address line for this billing address.";
+        $billAddressERROR= true;
+    }
+
+    if($billCity == "") {
+        $errorMsg[] = "Please enter a city name for this billing address.";
+        $billCityERROR = true;
+    }
+
+    if($billZip == "") {
+        $errorMsg[] = "Please enter a zip code for this billing address.";
+        $billZipERROR = true;
+    }
+
+    if($email == "") {
+        $errorMsg[] = "Please enter an email.";
+        $emailERROR = true;
+    } elseif(!verifyEmail($email)) {
+        $errorMsg[] = "Your email is invalid.";
+        $emailERROR = true;
+    }
+
+    if($cardNumber == "") {
+        $errorMsg[] = "Please enter a credit card number.";
+        $cardNumberERROR = true;
+    }
+
+    if($expDate == "") {
+        $errorMsg[] = "Please enter a expiration date for your card.";
+        $expDateERROR = true;
+    }
+
+    if($cvv2 == "") {
+        $errorMsg[] = "Please enter a CVV code for your card.";
+        $cvv2ERROR = true;
+    }
+
+    if($shipRate == "") {
+        $errorMsg[] = "Please select a shipping rate.";
+        $shipRateERROR = true;
+    } elseif ($shipRate != "economy" && $shipRate != "standard" && $shipRate != "express") {
+        $errorMsg[] = "Invalid shipping rate, please contact administrator.";
+        $shipRateERROR = true;
+
     }
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -274,7 +356,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldShipName">Full Name</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($shipNameERROR) print 'class="mistake"';?>
                     id="fldShipName"
                     name="fldShipName"
                     value="<?php print $shipName;?>">
@@ -284,7 +366,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldShipAddress">Address Line</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($shipAddressERROR) print 'class="mistake"';?>
                     id="fldShipAddress"
                     name="fldShipAddress"
                     value="<?php print $shipAddress;?>">
@@ -294,7 +376,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldShipCity">City</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($shipCityERROR) print 'class="mistake"';?>
                     id="fldShipCity"
                     name="fldShipCity"
                     value="<?php print $shipCity;?>">
@@ -304,10 +386,20 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldShipZip">Zip Code</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($shipZipERROR) print 'class="mistake"';?>
                     id="fldShipZip"
                     name="fldShipZip"
                     value="<?php print $shipZip;?>">
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <label class="required" for="fldEmail">Email</label>
+            <p>
+                <input type="text" <?php if ($emailERROR) print 'class="mistake"';?>
+                    id="fldEmail"
+                    name="fldEmail"
+                    value="<?php print $email;?>">
             </p>
         </fieldset>
 
@@ -315,7 +407,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldBillName">Full Name</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($billNameERROR) print 'class="mistake"';?>
                     id="fldBillName"
                     name="fldBillName"
                     value="<?php print $billName;?>">
@@ -325,7 +417,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldBillAddress">Address Line</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($billAddressERROR) print 'class="mistake"';?>
                     id="fldBillAddress"
                     name="fldBillAddress"
                     value="<?php print $billAddress;?>">
@@ -335,7 +427,7 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldBillCity">City</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($billCityERROR) print 'class="mistake"';?>
                     id="fldBillCity"
                     name="fldBillCity"
                     value="<?php print $billCity;?>">
@@ -345,14 +437,42 @@ if (isset($_POST["btnSubmit"])) {
         <fieldset>
             <label class="required" for="fldBillZip">Zip Code</label>
             <p>
-                <input type="text" <?php if (false) print 'class="mistake"';?>
+                <input type="text" <?php if ($billZipERROR) print 'class="mistake"';?>
                     id="fldBillZip"
                     name="fldBillZip"
                     value="<?php print $billZip;?>">
             </p>
         </fieldset>
 
+        <fieldset>
+            <label class="required" for="fldCardNum">Card Number</label>
+            <p>
+                <input type="text" <?php if ($cardNumberERROR) print 'class="mistake"';?>
+                    id="fldCardNum"
+                    name="fldCardNum"
+                    value="<?php print $cardNumber;?>">
+            </p>
+        </fieldset>
 
+        <fieldset>
+            <label class="required" for="fldExpDate">Expiration Date</label>
+            <p>
+                <input type="text" <?php if ($expDateERROR) print 'class="mistake"';?>
+                    id="fldExpDate"
+                    name="fldExpDate"
+                    value="<?php print $expDate?>">
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <label class="required" for="fldCvv2">CVV2 Code</label>
+            <p>
+                <input type="text" <?php if ($cvv2ERROR) print 'class="mistake"';?>
+                    id="fldCvv2"
+                    name="fldCvv2"
+                    value="<?php print $cvv2?>">
+            </p>
+        </fieldset>
 
         <!-- make this into a list box with valid countries being in a table
         <fieldset>
@@ -365,6 +485,17 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
         -->
+
+
+    <fieldset class="radio <?php if ($trailError) print ' mistake'; ?>">
+        <legend>Select a Shipping Rate</legend>
+        <input type="radio" value="economy" <?php if($shipRate == "economy"){print ' checked="checked"';}?> name="fldShipRate">
+        <label class="radio-field">Economy (free)</label>
+        <input type="radio" value="standard" <?php if($shipRate == "standard"){print ' checked="checked"';}?> name="fldShipRate">
+        <label class="radio-field">Standard ($5)</label>
+        <input type="radio" value="express" <?php if($shipRate == "express"){print ' checked="checked"';}?> name="fldShipRate">
+        <label class="radio-field">Express ($10)</label>
+    </fieldset>
 
         <fieldset class="buttons">
             <legend></legend>
