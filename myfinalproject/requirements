@@ -10,8 +10,8 @@ need minimum of one form:
 insert data into at least two tables
 # one text box for a users email address
 # two additional text boxes
-one list box
-three check boxes
+# one list box
+# three check boxes
 # three radio buttons
 # submit button
 # field sets and legends as needed

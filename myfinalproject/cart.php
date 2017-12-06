@@ -39,48 +39,49 @@ if(isset($_SESSION['cart'])) {
 ?>
 
 <div id="wrapper">
+<div id="spacedcontent">
 <h1>My Cart</h1>
-<form method="post" action="cart.php">
-    <table>
-
+<form class="cartbuttons" method="post" action="cart.php">
+    <table id="mycart">
     <?php
         if(isset($_SESSION['cart'])) {
         print('
         <tr>
-            <th>Icon</th>
-            <th>Item</th>
-            <th>Price</th>
-            <th>Quantity</th>
+            <th><u>Icon</u></th>
+            <th><u>Item</u></th>
+            <th><u>Price</u></th>
+            <th><u>Quantity</u></th>
         </tr>');
         foreach($records as $record) {
             $totalprice += $_SESSION['cart'][$record['pmkProductId']]['quantity']*$record['fldPrice'];
     ?>
         <tr>
-            <td width="110" class="cartitem"><img class="cartimg" src="<?php print $record['fldImgUrl']?>"></td>
+            <td width="80" class="cartitem"><img class="cartimg" src="<?php print $record['fldImgUrl']?>"></td>
             <td class="cartitem"><?php print $record['fldProductName'] ?></td>
-            <td class="cartitem"><?php print $record['fldPrice'] ?></td>
+            <td class="cartitem"><?php print '$'.$record['fldPrice'] ?></td>
             <td class="cartitem"><input type="text" name="quantity[<?php print $record['pmkProductId'] ?>]" size="5"
             value="<?php print $_SESSION['cart'][$record['pmkProductId']]['quantity'] ?>"/></td>
         </tr>
-        <?php }} else { print '<td colspan="4">Sorry, Your Shopping Cart is as empty as this cup.</td>'; } ?>
+        <?php }} else { print '<tr><td colspan="4"><b>Sorry, your shopping cart is empty.'; } ?>
     <?php
     if(isset($_SESSION['cart'])) {
-        print '<tr><td colspan="4">Subtotal:'.$totalprice; }?></td></tr>
+        print '<tr><td colspan="4"><b>Subtotal: $'.$totalprice; }?></b></td></tr>
     </table>
     <?php
     if(isset($_SESSION['cart'])) {
     print '<button type="submit" name="update">Update Cart</button>';
-    } else { print '<img src="images/cup.jpg">'; }
+    } //else { print '<img src="images/cup.jpg">'; }
     ?>
 </form>
 <?php
  if(isset($_SESSION['cart'])) {
 print '
-<form action="checkout.php">
+<form class="cartbuttons" action="checkout.php">
     <input type="submit" value="checkout" />
 </form>';
  }
 ?>
+</div>
 </div>
 
 <?php

@@ -211,6 +211,10 @@ footer > p {
     margin: 0 auto;
 }
 
+#spacedcontent {
+    margin: 1em 0em 1em 3em;
+}
+
 .mistake {
     background-color: pink;
 }
@@ -243,6 +247,15 @@ nav ol li{
     padding-right: 2em;
 }
 
+.cartbuttons {
+    margin: 0 0 1em 0;
+}
+
+#mycart {
+    border-spacing: 8em 1em;
+    margin: 1em 0em 2em -8em;
+}
+
 #table aside{
     height: 600px;
     float: left;
@@ -250,20 +263,12 @@ nav ol li{
     overflow: auto;
     margin-left: 2em;
 }
+
 #table section{
     width: 35%;
     height: 600px;
     float: left;
     overflow: auto;
-}
-#table table{
-    border: medium #000080 solid;
-    border-collapse: collapse;
-}
-
-#table td {
-    border: thin #000080 solid;
-    border-collapse: collapse;
 }
 
 .cartitem {

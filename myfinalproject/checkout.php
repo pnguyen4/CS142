@@ -33,16 +33,19 @@ $thisURL = $domain . $phpSelf;
 $shipName = "";
 $shipAddress = "";
 $shipCity = "";
+$shipState = "";
 $shipZip = "";
 $billName = "";
 $billAddress = "";
 $billCity = "";
+$billState = "";
 $billZip = "";
 $email = "";
 $cardNumber = "";
 $expDate = "";
 $cvv2 = "";
 $shipRate = "";
+$isGift = false;
 
 //%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%^%
 //
@@ -57,10 +60,12 @@ $shipRate = "";
 $shipNameERROR = "";
 $shipAddressERROR = "";
 $shipCityERROR = "";
+$shipStateERROR = "";
 $shipZipERROR = "";
 $billNameERROR = "";
 $billAddressERROR = "";
 $billCityERROR = "";
+$billStateERROR = "";
 $billZipERROR = "";
 $emailERROR = "";
 $cardNumberERROR = "";
@@ -115,20 +120,46 @@ if (isset($_POST["btnSubmit"])) {
     $shipCity = htmlentities($_POST["fldShipCity"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $shipCity;
 
+	$shipState = htmlentities($_POST["fldShipState"], ENT_QUOTES, "UTF-8");
+	$dataRecord[] = $shipState;
+
     $shipZip = htmlentities($_POST["fldShipZip"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $shipZip;
 
-    $billName = htmlentities($_POST["fldBillName"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $billName;
+    if(isset($_POST["fldbillequalship"])) {
+        $billName = $shipName;
+        $dataRecord[] = $billName;
 
-    $billAddress = htmlentities($_POST["fldBillAddress"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $billAddress;
+        $billAddress = $shipAddress;
+        $dataRecord[] = $billAddress;
 
-    $billCity = htmlentities($_POST["fldBillCity"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $billCity;
+        $billCity = $shipCity;
+        $dataRecord[] = $billCity;
 
-    $billZip = htmlentities($_POST["fldBillZip"], ENT_QUOTES, "UTF-8");
-    $dataRecord[] = $billZip;
+		$billState = $shipState;
+		$dataRecord[] = $billState;
+		$_POST["fldBillState"] = $shipState;
+		//this won't show up in post array correctly because the post array gets
+		//printed before this line is executed, but all the data is correct.
+
+        $billZip = $shipZip;
+        $dataRecord[] = $billZip;
+    } else {
+    	$billName = htmlentities($_POST["fldBillName"], ENT_QUOTES, "UTF-8");
+    	$dataRecord[] = $billName;
+
+    	$billAddress = htmlentities($_POST["fldBillAddress"], ENT_QUOTES, "UTF-8");
+    	$dataRecord[] = $billAddress;
+
+    	$billCity = htmlentities($_POST["fldBillCity"], ENT_QUOTES, "UTF-8");
+    	$dataRecord[] = $billCity;
+
+		$billState = htmlentities($_POST["fldBillState"], ENT_QUOTES, "UTF-8");
+		$dataRecord[] = $billState;
+
+    	$billZip = htmlentities($_POST["fldBillZip"], ENT_QUOTES, "UTF-8");
+    	$dataRecord[] = $billZip;
+    }
 
     $email = htmlentities($_POST["fldEmail"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $email;
@@ -142,7 +173,9 @@ if (isset($_POST["btnSubmit"])) {
     $cvv2 = htmlentities($_POST["fldCvv2"], ENT_QUOTES, "UTF-8");
     $dataRecord[] = $cvv2;
 
-    $shipRate = htmlentities($_POST["fldShipRate"], ENT_QUOTES, "UTF-8");
+    if(isset($_POST["fldShipRate"])) {
+        $shipRate = htmlentities($_POST["fldShipRate"], ENT_QUOTES, "UTF-8");
+    } else { $shipRate = "economy"; }
     $dataRecord[] = $shipRate;
 
     //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
@@ -159,41 +192,81 @@ if (isset($_POST["btnSubmit"])) {
     if($shipName == "") {
         $errorMsg[] = "Please enter a Name for this shipping address.";
         $shipNameERROR = true;
+    } elseif(!verifyAlphaNum($shipName)) {
+        $errorMsg[] = "Error in processing shipping name.";
+        $shipNameERROR = true;
     }
 
     if($shipAddress == "") {
         $errorMsg[] = "Please enter an address line for this shipping address.";
+        $shipAddressERROR= true;
+    } elseif(!verifyAlphaNum($shipAddress)) {
+        $errorMsg[] = "Error in processing shipping address.";
         $shipAddressERROR= true;
     }
 
     if($shipCity == "") {
         $errorMsg[] = "Please enter a city name for this shipping address.";
         $shipCityERROR= true;
+    } elseif(!verifyAlphaNum($shipCity)) {
+        $errorMsg[] = "Error in processing shipping city.";
+        $shipCityERROR= true;
+    }
+
+    if($shipState == "" || $shipState == "-") {
+        $errorMsg[] = "Please select a state for this shipping address.";
+        $shipStateERROR= true;
+    } elseif(!verifyState($shipState)) {
+        $errorMsg[] = "Error in processing State.";
+        $shipStateERROR= true;
     }
 
     if($shipZip == "") {
         $errorMsg[] = "Please enter a zip code for this shipping address.";
+        $shipZipERROR = true;
+    } elseif(!verifyNumeric($shipZip)) {
+        $errorMsg[] = "Error in processing shipping Zip Code.";
         $shipZipERROR = true;
     }
 
     if($billName == "") {
         $errorMsg[] = "Please enter a Name for this billing address.";
         $billNameERROR = true;
+    } elseif(!verifyAlphaNum($billName)) {
+        $errorMsg[] = "Error in processing billing name.";
+        $billNameERROR = true;
     }
 
     if($billAddress == "") {
         $errorMsg[] = "Please enter an address line for this billing address.";
+        $billAddressERROR= true;
+    } elseif(!verifyAlphaNum($billAddress)) {
+        $errorMsg[] = "Error in processing billing address.";
         $billAddressERROR= true;
     }
 
     if($billCity == "") {
         $errorMsg[] = "Please enter a city name for this billing address.";
         $billCityERROR = true;
+    } elseif(!verifyAlphaNum($billCity)) {
+        $errorMsg[] = "Error in processing billing city.";
+        $billCityERROR = true;
+    }
+
+    if($billState == "" || $billState == "-") {
+        $errorMsg[] = "Please select a state for this billing address.";
+        $shipStateERROR= true;
+    } elseif(!verifyState($billState)) {
+        $errorMsg[] = "Error in processing State.";
+        $billStateERROR= true;
     }
 
     if($billZip == "") {
         $errorMsg[] = "Please enter a zip code for this billing address.";
         $billZipERROR = true;
+    } elseif(!verifyNumeric($billZip)) {
+        $errorMsg[] = "Error in processing billing Zip Code.";
+        $shipZipERROR = true;
     }
 
     if($email == "") {
@@ -207,15 +280,24 @@ if (isset($_POST["btnSubmit"])) {
     if($cardNumber == "") {
         $errorMsg[] = "Please enter a credit card number.";
         $cardNumberERROR = true;
+    } elseif(!verifyAlphaNum($cardNumber)) {
+        $errorMsg[] = "Error in processing credit card number.";
+        $cardNumberERROR = true;
     }
 
     if($expDate == "") {
         $errorMsg[] = "Please enter a expiration date for your card.";
         $expDateERROR = true;
+    } elseif(!verifyAlphaNum($expDate)) {
+        $errorMsg[] = "Error in processing expiration date for your card.";
+        $expDateERROR = true;
     }
 
     if($cvv2 == "") {
         $errorMsg[] = "Please enter a CVV code for your card.";
+        $cvv2ERROR = true;
+    } elseif(!verifyNumeric($cvv2)) {
+        $errorMsg[] = "Error in processing cvv code.";
         $cvv2ERROR = true;
     }
 
@@ -245,6 +327,7 @@ if (isset($_POST["btnSubmit"])) {
         //
         // This block saves the data to a database (formerly csv file).
 
+        /*
 		$dataEntered = false;
         try {
             $thisDatabaseWriter->db->beginTransaction();
@@ -294,12 +377,14 @@ if (isset($_POST["btnSubmit"])) {
             $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
         }
 
+         */
     } // end form is valid
 
 }   // ends if form was submitted.
 ?>
 
 <div id="wrapper">
+<div id="spacedcontent">
     <?php
     //####################################
     //
@@ -383,6 +468,66 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
 
+		<fieldset>
+		<label class="required" for="fldShipState">State</label>
+		<p>
+		<select name="fldShipState" id="fldShipState">
+			<option label="State" value="-">- - - - - - - - - - - - - -</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "AL"){print "selected";}?> label="Alabama" value="AL">Alabama</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "AK"){print "selected";}?> label="Alaska" value="AK">Alaska</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "AZ"){print "selected";}?> label="Arizona" value="AZ">Arizona</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "AR"){print "selected";}?> label="Arkansas" value="AR">Arkansas</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "CA"){print "selected";}?> label="California" value="CA">California</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "CO"){print "selected";}?> label="Colorado" value="CO">Colorado</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "CT"){print "selected";}?> label="Connecticut" value="CT">Connecticut</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "DE"){print "selected";}?> label="Delaware" value="DE">Delaware</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "DC"){print "selected";}?> label="District Of Columbia" value="DC">District Of Columbia</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "FL"){print "selected";}?> label="Florida" value="FL">Florida</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "GA"){print "selected";}?> label="Georgia" value="GA">Georgia</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "HI"){print "selected";}?> label="Hawaii" value="HI">Hawaii</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "ID"){print "selected";}?> label="Idaho" value="ID">Idaho</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "IL"){print "selected";}?> label="Illinois" value="IL">Illinois</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "IN"){print "selected";}?> label="Indiana" value="IN">Indiana</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "IA"){print "selected";}?> label="Iowa" value="IA">Iowa</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "KS"){print "selected";}?> label="Kansas" value="KS">Kansas</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "KY"){print "selected";}?> label="Kentucky" value="KY">Kentucky</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "LA"){print "selected";}?> label="Louisiana" value="LA">Louisiana</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "ME"){print "selected";}?> label="Maine" value="ME">Maine</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MD"){print "selected";}?> label="Maryland" value="MD">Maryland</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MA"){print "selected";}?> label="Massachusetts" value="MA">Massachusetts</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MI"){print "selected";}?> label="Michigan" value="MI">Michigan</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MN"){print "selected";}?> label="Minnesota" value="MN">Minnesota</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MS"){print "selected";}?> label="Mississippi" value="MS">Mississippi</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MO"){print "selected";}?> label="Missouri" value="MO">Missouri</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "MT"){print "selected";}?> label="Montana" value="MT">Montana</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NE"){print "selected";}?> label="Nebraska" value="NE">Nebraska</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NV"){print "selected";}?> label="Nevada" value="NV">Nevada</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NH"){print "selected";}?> label="New Hampshire" value="NH">New Hampshire</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NJ"){print "selected";}?> label="New Jersey" value="NJ">New Jersey</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NM"){print "selected";}?> label="New Mexico" value="NM">New Mexico</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NY"){print "selected";}?> label="New York" value="NY">New York</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "NC"){print "selected";}?> label="North Carolina" value="NC">North Carolina</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "ND"){print "selected";}?> label="North Dakota" value="ND">North Dakota</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "OH"){print "selected";}?> label="Ohio" value="OH">Ohio</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "OK"){print "selected";}?> label="Oklahoma" value="OK">Oklahoma</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "OR"){print "selected";}?> label="Oregon" value="OR">Oregon</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "PA"){print "selected";}?> label="Pennsylvania" value="PA">Pennsylvania</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "RI"){print "selected";}?> label="Rhode Island" value="RI">Rhode Island</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "SC"){print "selected";}?> label="South Carolina" value="SC">South Carolina</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "SD"){print "selected";}?> label="South Dakota" value="SD">South Dakota</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "TN"){print "selected";}?> label="Tennessee" value="TN">Tennessee</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "TX"){print "selected";}?> label="Texas" value="TX">Texas</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "UT"){print "selected";}?> label="Utah" value="UT">Utah</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "VT"){print "selected";}?> label="Vermont" value="VT">Vermont</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "VA"){print "selected";}?> label="Virginia" value="VA">Virginia</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "WA"){print "selected";}?> label="Washington" value="WA">Washington</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "WV"){print "selected";}?> label="West Virginia" value="WV">West Virginia</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "WI"){print "selected";}?> label="Wisconsin" value="WI">Wisconsin</option>
+			<option <?php if(isset($_POST["fldShipState"]) && $_POST["fldShipState"] == "WY"){print "selected";}?> label="Wyoming" value="WY">Wyoming</option>
+		</select>
+		</p>
+		</fieldset>
+
         <fieldset>
             <label class="required" for="fldShipZip">Zip Code</label>
             <p>
@@ -393,17 +538,16 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
 
+        <h1>Billing Information: </h1>
         <fieldset>
-            <label class="required" for="fldEmail">Email</label>
             <p>
-                <input type="text" <?php if ($emailERROR) print 'class="mistake"';?>
-                    id="fldEmail"
-                    name="fldEmail"
-                    value="<?php print $email;?>">
+            <input type="checkbox" <?php if(isset($_POST["fldbillequalship"])) {print ' checked="checked"';}?>
+                   value="fldbillequalship"
+                   id="fldbillequalship"
+                   name="fldbillequalship">
+            <label for="fldbillequalship">My Billing Information is the same as Shipping</label>
             </p>
         </fieldset>
-
-        <h1>Billing Information: </h1>
         <fieldset>
             <label class="required" for="fldBillName">Full Name</label>
             <p>
@@ -434,6 +578,66 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
 
+		<fieldset>
+		<label class="required" for="fldBillState">State</label>
+		<p>
+		<select name="fldBillState" id="fldBillState">
+			<option label="State" value="-"> - - - - - - - - - - - - - -</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "AL"){print "selected";}?> label="Alabama" value="AL">Alabama</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "AK"){print "selected";}?> label="Alaska" value="AK">Alaska</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "AZ"){print "selected";}?> label="Arizona" value="AZ">Arizona</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "AR"){print "selected";}?> label="Arkansas" value="AR">Arkansas</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "CA"){print "selected";}?> label="California" value="CA">California</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "CO"){print "selected";}?> label="Colorado" value="CO">Colorado</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "CT"){print "selected";}?> label="Connecticut" value="CT">Connecticut</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "DE"){print "selected";}?> label="Delaware" value="DE">Delaware</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "DC"){print "selected";}?> label="District Of Columbia" value="DC">District Of Columbia</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "FL"){print "selected";}?> label="Florida" value="FL">Florida</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "GA"){print "selected";}?> label="Georgia" value="GA">Georgia</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "HI"){print "selected";}?> label="Hawaii" value="HI">Hawaii</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "ID"){print "selected";}?> label="Idaho" value="ID">Idaho</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "IL"){print "selected";}?> label="Illinois" value="IL">Illinois</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "IN"){print "selected";}?> label="Indiana" value="IN">Indiana</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "IA"){print "selected";}?> label="Iowa" value="IA">Iowa</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "KS"){print "selected";}?> label="Kansas" value="KS">Kansas</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "KY"){print "selected";}?> label="Kentucky" value="KY">Kentucky</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "LA"){print "selected";}?> label="Louisiana" value="LA">Louisiana</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "ME"){print "selected";}?> label="Maine" value="ME">Maine</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MD"){print "selected";}?> label="Maryland" value="MD">Maryland</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MA"){print "selected";}?> label="Massachusetts" value="MA">Massachusetts</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MI"){print "selected";}?> label="Michigan" value="MI">Michigan</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MN"){print "selected";}?> label="Minnesota" value="MN">Minnesota</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MS"){print "selected";}?> label="Mississippi" value="MS">Mississippi</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MO"){print "selected";}?> label="Missouri" value="MO">Missouri</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "MT"){print "selected";}?> label="Montana" value="MT">Montana</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NE"){print "selected";}?> label="Nebraska" value="NE">Nebraska</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NV"){print "selected";}?> label="Nevada" value="NV">Nevada</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NH"){print "selected";}?> label="New Hampshire" value="NH">New Hampshire</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NJ"){print "selected";}?> label="New Jersey" value="NJ">New Jersey</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NM"){print "selected";}?> label="New Mexico" value="NM">New Mexico</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NY"){print "selected";}?> label="New York" value="NY">New York</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "NC"){print "selected";}?> label="North Carolina" value="NC">North Carolina</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "ND"){print "selected";}?> label="North Dakota" value="ND">North Dakota</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "OH"){print "selected";}?> label="Ohio" value="OH">Ohio</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "OK"){print "selected";}?> label="Oklahoma" value="OK">Oklahoma</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "OR"){print "selected";}?> label="Oregon" value="OR">Oregon</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "PA"){print "selected";}?> label="Pennsylvania" value="PA">Pennsylvania</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "RI"){print "selected";}?> label="Rhode Island" value="RI">Rhode Island</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "SC"){print "selected";}?> label="South Carolina" value="SC">South Carolina</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "SD"){print "selected";}?> label="South Dakota" value="SD">South Dakota</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "TN"){print "selected";}?> label="Tennessee" value="TN">Tennessee</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "TX"){print "selected";}?> label="Texas" value="TX">Texas</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "UT"){print "selected";}?> label="Utah" value="UT">Utah</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "VT"){print "selected";}?> label="Vermont" value="VT">Vermont</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "VA"){print "selected";}?> label="Virginia" value="VA">Virginia</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "WA"){print "selected";}?> label="Washington" value="WA">Washington</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "WV"){print "selected";}?> label="West Virginia" value="WV">West Virginia</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "WI"){print "selected";}?> label="Wisconsin" value="WI">Wisconsin</option>
+			<option <?php if(isset($_POST["fldBillState"]) && $_POST["fldBillState"] == "WY"){print "selected";}?> label="Wyoming" value="WY">Wyoming</option>
+		</select>
+		</p>
+		</fieldset>
+
         <fieldset>
             <label class="required" for="fldBillZip">Zip Code</label>
             <p>
@@ -444,6 +648,7 @@ if (isset($_POST["btnSubmit"])) {
             </p>
         </fieldset>
 
+        <h1>Payment Information: </h1>
         <fieldset>
             <label class="required" for="fldCardNum">Card Number</label>
             <p>
@@ -471,6 +676,36 @@ if (isset($_POST["btnSubmit"])) {
                     id="fldCvv2"
                     name="fldCvv2"
                     value="<?php print $cvv2?>">
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <label class="required" for="fldEmail">Email</label>
+            <p>
+                <input type="text" <?php if ($emailERROR) print 'class="mistake"';?>
+                    id="fldEmail"
+                    name="fldEmail"
+                    value="<?php print $email;?>">
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <p>
+            <input type="checkbox" <?php if(isset($_POST["fldGift"])) {print ' checked="checked"';}?>
+                   value="fldGift"
+                   id="fldGift"
+                   name="fldGift">
+            <label for="fldGift">Is this a gift? (free wrapping service)</label>
+            </p>
+        </fieldset>
+
+        <fieldset>
+            <p>
+            <input type="checkbox" <?php if(isset($_POST["fldNotify"])) {print ' checked="checked"';}?>
+                   value="fldNotify"
+                   id="fldNotify"
+                   name="fldNotify">
+            <label for="fldNotify">Would you like to recieve email updates for new products?</label>
             </p>
         </fieldset>
 
@@ -503,6 +738,7 @@ if (isset($_POST["btnSubmit"])) {
         </fieldset> <!-- ends buttons -->
     </form>
 
+</div>
 </div>
 
 <?php
