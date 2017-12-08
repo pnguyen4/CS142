@@ -327,18 +327,34 @@ if (isset($_POST["btnSubmit"])) {
         //
         // This block saves the data to a database (formerly csv file).
 
-        /*
+
 		$dataEntered = false;
         try {
             $thisDatabaseWriter->db->beginTransaction();
 
-            $query = 'INSERT INTO tblTrails SET ';
-            $query .= 'fldTrailName = ?, ';
-            $query .= 'fldTotalDistance = ?, ';
-            $query .= 'fldHikingTime = ?, ';
-            $query .= 'fldVerticalRise = ?, ';
-            $query .= 'fldRating = ? ';
+            if(isset($_POST["fldGift"])) { $isGift = true; }
+            $dataRecord[] = $isGift; //better now than never
 
+            $query = 'INSERT INTO tblOrders SET ';
+            $query .= 'fldShipName = ?, ';
+            $query .= 'fldShipAddress = ?, ';
+            $query .= 'fldShipCity = ?, ';
+            $query .= 'fldShipState = ?, ';
+            $query .= 'fldShipZip = ?, ';
+            $query .= 'fldBillName = ?, ';
+            $query .= 'fldBillAddress = ?, ';
+            $query .= 'fldBillCity = ?, ';
+            $query .= 'fldBillState = ?, ';
+            $query .= 'fldBillZip = ?, ';
+            $query .= 'fldEmail = ?, ';
+            $query .= 'fldCardNumber = ?, ';
+            $query .= 'fldExpDate = ?, ';
+            $query .= 'fldCvv = ?, ';
+            $query .= 'fldShippingRate = ?, ';
+            $query .= 'fldGift = ?';
+
+
+            $primaryKey = "";
             if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
                 $query = $thisDatabaseWriter->sanitizeQuery($query);
                 $results = $thisDatabaseWriter->insert($query, $dataRecord);
@@ -349,23 +365,52 @@ if (isset($_POST["btnSubmit"])) {
                 }
             }
 
-            foreach($tagRecord as $tags) {
-                if(isset($_POST[str_replace(' ', '_', $tags['pmkTag'])])) {
-                    $query = 'INSERT INTO tblTrailsTags SET ';
-                    $query .= 'pfkTrailsId = ?,';
-                    $query .= 'pfkTag = ?';
-                    $thisquery = array($primaryKey, $tags['pmkTag']);
+            foreach($_SESSION['cart'] as $id => $value) {
+                $query = 'INSERT INTO tblOrderItems SET ';
+                $query .= 'fnkOrderId = ?, ';
+                $query .= 'fnkProductId = ?, ';
+                $query .= 'fldQuantity = ?';
+                $thisquery = array($primaryKey, $id, $_SESSION['cart'][$id]['quantity']);
 
-                    if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
-                        $query = $thisDatabaseWriter->sanitizeQuery($query);
-                        $results = $thisDatabaseWriter->insert($query, $thisquery);
-                        print_r($results);
-                    }
+                if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                    $query = $thisDatabaseWriter->sanitizeQuery($query);
+                    $results = $thisDatabaseWriter->insert($query, $thisquery);
+                }
+
+                $thisInStock = "";
+                $thisInOrder = "";
+                $thisquery = array($id);
+                $query = "SELECT fldInStock, fldInOrder from tblProducts WHERE pmkProductId = ?";
+                if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
+                    $query = $thisDatabaseWriter->sanitizeQuery($query);
+                    $thisitem = $thisDatabaseWriter->select($query, $thisquery);
+                }
+
+                $thisInStock = $thisitem[0]['fldInStock'] - $_SESSION['cart'][$id]['quantity'];
+                $thisInOrder = $thisitem[0]['fldInOrder'] + $_SESSION['cart'][$id]['quantity'];
+                $thisquery = array($thisInStock, $thisInOrder, $id);
+                $query = "UPDATE tblProducts SET ";
+                $query .= "fldInStock = ?, ";
+                $query .= "fldInOrder = ? ";
+                $query .= "WHERE pmkProductId = ?";
+                if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
+                    $query = $thisDatabaseWriter->sanitizeQuery($query);
+                    $thisitem = $thisDatabaseWriter->update($query, $thisquery);
+                }
+
+            }
+
+            if(isset($_POST["fldNotify"])) {
+                // fldEmail column is set to be UNIQUE, so no checking necessary
+                $query = 'INSERT INTO tblMailingList SET fldEmail = ?';
+                $thisquery = array($email);
+                if ($thisDatabaseWriter->querySecurityOk($query, 0)) {
+                    $query = $thisDatabaseWriter->sanitizeQuery($query);
+                    $results = $thisDatabaseWriter->insert($query, $thisquery);
                 }
             }
 
             // all sql statements are done so lets commit to our changes
-
             $dataEntered = $thisDatabaseWriter->db->commit();
 
             if (DEBUG)
@@ -377,9 +422,7 @@ if (isset($_POST["btnSubmit"])) {
             $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
         }
 
-         */
     } // end form is valid
-
 }   // ends if form was submitted.
 ?>
 
@@ -708,19 +751,6 @@ if (isset($_POST["btnSubmit"])) {
             <label for="fldNotify">Would you like to recieve email updates for new products?</label>
             </p>
         </fieldset>
-
-        <!-- make this into a list box with valid countries being in a table
-        <fieldset>
-            <label class="required" for="fldShipCountry">Zip Code</label>
-            <p>
-                <input type="text" <?php //if (false) print 'class="mistake"';?>
-                    id="fldShipZip"
-                    name="fldShipZip"
-                    value="<?php //print $shipZip;?>">
-            </p>
-        </fieldset>
-        -->
-
 
     <fieldset class="radio <?php if ($trailError) print ' mistake'; ?>">
         <legend>Select a Shipping Rate</legend>

@@ -51,8 +51,8 @@ if (isset($_GET["Id"])) {
         <div id="index2">
         <h2 style="padding: 1em;">Description:</h2>
         <p id="description">'.$description.'</p>
+        <a id="description" href="productpage.php?page=products&action=add&Id='.$productId.'">Add to cart</a>
         </div>
-        <a href="productpage.php?page=products&action=add&Id='.$productId.'">Add to cart</a>
     <div><!--end wrapper-->
     ');
 } else {

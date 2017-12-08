@@ -1,25 +1,58 @@
 <?php
 include 'top.php';
-
+?>
+<div id="wrapper">
+<div id="spacedcontent">
+<?php
 if (DEBUG) {
     print '<p>Contents of the array<pre>';
     print_r($records);
     print '</pre></p>';
 }
+$isUpdated = false;
+$hasError = false;
 
 if(isset($_POST['update'])){
+    $hasError = false;
+
     foreach($_POST['quantity'] as $key => $val) {
-        if($val == 0) {
-            unset($_SESSION['cart'][$key]);
-            if(empty($_SESSION['cart'])) {
-                session_destroy(); //resets session so that empty cart message shows up
-            }
-        } else {
-            $_SESSION['cart'][$key]['quantity']=$val;
+        $thisquery = array($key);
+        $query = "SELECT fldProductName, fldInStock from tblProducts WHERE pmkProductId = ?";
+        if ($thisDatabaseReader->querySecurityOk($query, 1)) {
+            $query = $thisDatabaseReader->sanitizeQuery($query);
+            $thisitem = $thisDatabaseReader->select($query, $thisquery);
+        }
+        if($val > $thisitem[0]['fldInStock']) {
+            print '<p><b>Error in updating quantity of '.
+                $thisitem[0]['fldProductName'].': quantity exceeds stock.</b></p>';
+            $hasError = true;
+        }
+        if($hasError) {
+            print '<p><b>Please correct values and try again.</b></p>';
         }
     }
-    header("Location: http://pnguyen4.w3.uvm.edu/cs148/dev/myfinalproject/cart.php");
-    die();
+
+    if(!$hasError) {
+        foreach($_POST['quantity'] as $key => $val) {
+        $thisquery = array($key);
+        $query = "SELECT fldProductName, fldInStock from tblProducts WHERE pmkProductId = ?";
+        if ($thisDatabaseReader->querySecurityOk($query, 1)) {
+            $query = $thisDatabaseReader->sanitizeQuery($query);
+            $thisitem = $thisDatabaseReader->select($query, $thisquery);
+        }
+
+            if($val == 0) {
+                unset($_SESSION['cart'][$key]);
+                if(empty($_SESSION['cart'])) {
+                    session_destroy(); //resets session so that empty cart message shows up
+                }
+            } else {
+                $_SESSION['cart'][$key]['quantity']=$val;
+            }
+        }
+        header("Location: http://pnguyen4.w3.uvm.edu/cs148/dev/myfinalproject/cart.php");
+        die();
+    }
 }
 
 $totalprice=0;
@@ -38,8 +71,6 @@ if(isset($_SESSION['cart'])) {
 }
 ?>
 
-<div id="wrapper">
-<div id="spacedcontent">
 <h1>My Cart</h1>
 <form class="cartbuttons" method="post" action="cart.php">
     <table id="mycart">

@@ -16,7 +16,7 @@ if ($debug){  // later you can uncomment the if statement
     if (isset($_POST["blacktea"])) {
         $query = 'SELECT * FROM tblProducts WHERE fnkCategoryId=2';
     }
-    if (isset($_POST["greentea"])) {
+    if (isset($_POST["greentea"]) || empty($_POST)) {
         $query = 'SELECT * FROM tblProducts WHERE fnkCategoryId=3';
     }
         if ($thisDatabaseReader->querySecurityOk($query)) {
@@ -34,6 +34,18 @@ if ($debug){  // later you can uncomment the if statement
             print "</figure>";
         }
     }
+    if (isset($_POST["whitetea"])) {
+        print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
+    }
+    if (isset($_POST["yellowtea"])) {
+        print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
+    }
+    if (isset($_POST["oolongtea"])) {
+        print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
+    }
+    if (isset($_POST["puerhtea"])) {
+        print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
+    }
     ?>
 
     </div> <!--end main-->
@@ -50,7 +62,7 @@ if ($debug){  // later you can uncomment the if statement
         <li <?php if(isset($_POST["yellowtea"])) print 'class="activesidebar"'; ?>>
             <input class="sidebarbutton" type="submit" name="yellowtea" value="yellow tea"/>
         </li>
-        <li <?php if(isset($_POST["greentea"])) print 'class="activesidebar"'; ?>>
+        <li <?php if(isset($_POST["greentea"]) || empty($_POST)) print 'class="activesidebar"'; ?>>
             <input class="sidebarbutton" type="submit" name="greentea" value="green tea"/>
         </li>
         <li <?php if(isset($_POST["oolongtea"])) print 'class="activesidebar"'; ?>>

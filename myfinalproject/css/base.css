@@ -132,10 +132,12 @@ footer > p {
 }
 
 #greeter {
-    padding-top: 1em;
-    padding-bottom: 0em;
+    padding-top: 2em;
+    padding-bottom: 1em;
     font-size: 48px;
     text-align: center;
+    display: block;
+
 }
 
 #indextea {
@@ -249,6 +251,11 @@ nav ol li{
 
 .cartbuttons {
     margin: 0 0 1em 0;
+}
+
+#homeimg {
+    display: block;
+    margin: auto;
 }
 
 #mycart {
