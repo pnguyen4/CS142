@@ -27,9 +27,9 @@ if(isset($_POST['update'])){
                 $thisitem[0]['fldProductName'].': quantity exceeds stock.</b></p>';
             $hasError = true;
         }
-        if($hasError) {
-            print '<p><b>Please correct values and try again.</b></p>';
-        }
+    }
+    if($hasError) {
+        print '<p><b>Please correct values and try again.</b></p>';
     }
 
     if(!$hasError) {

@@ -365,6 +365,8 @@ if (isset($_POST["btnSubmit"])) {
                 }
             }
 
+            $reciept = "Your Receipt:<br>";
+            $totalprice = 0;
             foreach($_SESSION['cart'] as $id => $value) {
                 $query = 'INSERT INTO tblOrderItems SET ';
                 $query .= 'fnkOrderId = ?, ';
@@ -380,14 +382,18 @@ if (isset($_POST["btnSubmit"])) {
                 $thisInStock = "";
                 $thisInOrder = "";
                 $thisquery = array($id);
-                $query = "SELECT fldInStock, fldInOrder from tblProducts WHERE pmkProductId = ?";
+                $query = "SELECT fldProductName, fldPrice, fldInStock, fldInOrder from tblProducts WHERE pmkProductId = ?";
                 if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
                     $query = $thisDatabaseWriter->sanitizeQuery($query);
                     $thisitem = $thisDatabaseWriter->select($query, $thisquery);
                 }
+                $reciept .= $_SESSION['cart'][$id]['quantity']." x ".
+                    $thisitem[0]['fldProductName']." @ $".$thisitem[0]['fldPrice']."<br>";
+                $totalprice += $thisitem[0]['fldPrice'];
 
                 $thisInStock = $thisitem[0]['fldInStock'] - $_SESSION['cart'][$id]['quantity'];
                 $thisInOrder = $thisitem[0]['fldInOrder'] + $_SESSION['cart'][$id]['quantity'];
+
                 $thisquery = array($thisInStock, $thisInOrder, $id);
                 $query = "UPDATE tblProducts SET ";
                 $query .= "fldInStock = ?, ";
@@ -397,8 +403,25 @@ if (isset($_POST["btnSubmit"])) {
                     $query = $thisDatabaseWriter->sanitizeQuery($query);
                     $thisitem = $thisDatabaseWriter->update($query, $thisquery);
                 }
-
             }
+
+            $shipcost = 0;
+            //this is just a really bad bandaid to provide basic functionality.
+            switch($shipRate) {
+                case "economy":
+                    break;
+                case "standard":
+                    $shipcost = 5;
+                    break;
+                case "express":
+                    $shipcost = 10;
+                    break;
+                default:
+                    break;
+            }
+            $reciept .= "<br>Shipping: ".$shipRate." ($".$shipcost.")<br>";
+            $subtotal = $totalprice + $shipcost;
+            $reciept .= "Subtotal: $".$subtotal."<br>";
 
             if(isset($_POST["fldNotify"])) {
                 // fldEmail column is set to be UNIQUE, so no checking necessary
@@ -413,6 +436,16 @@ if (isset($_POST["btnSubmit"])) {
             // all sql statements are done so lets commit to our changes
             $dataEntered = $thisDatabaseWriter->db->commit();
 
+            $message = "Dear valued customer:<br><br>We have recieved your information and are
+                        currently processing your order.<br><br>Order number: ".$primaryKey."<br>";
+            $message .= $reciept;
+            $to = $email;
+            $cc = "";
+            $bcc = "";
+            $from = "White Lotus Support<service@pnguyen4.w3.uvm.edu>";
+            $subject = "Your order has been recieved";
+            $mailed = sendMail($to, $cc, $bcc, $from, $subject, $message);
+
             if (DEBUG)
                 print "<p>submission complete</p> ";
         } catch (PDOExecption $e) {
@@ -421,6 +454,7 @@ if (isset($_POST["btnSubmit"])) {
                 print "Error!: " . $e->getMessage() . "</br>";
             $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
         }
+
 
     } // end form is valid
 }   // ends if form was submitted.
@@ -436,7 +470,7 @@ if (isset($_POST["btnSubmit"])) {
     // If its the first time coming to the form or there are errors we are going
     // to display the form.
     if (isset($_POST["btnSubmit"]) AND empty($errorMsg)) { // closing of if marked with: end body submit
-        print "<h2>Thank you for providing your information.</h2>";
+        print "<h2>We have sent a copy of this message to your email: <br>".$message."<h2>";
 
     } else {
 
