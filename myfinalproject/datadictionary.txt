@@ -1,0 +1,55 @@
+CREATE TABLE IF NOT EXISTS `tblOrders` (
+  `pmkOrderId` int(11) NOT NULL,
+  `fldShipName` varchar(80) NOT NULL,
+  `fldShipAddress` varchar(80) NOT NULL,
+  `fldShipCity` varchar(80) NOT NULL,
+  `fldShipState` varchar(2) NOT NULL,
+  `fldShipZip` varchar(20) NOT NULL,
+  `fldBillName` varchar(80) NOT NULL,
+  `fldBillAddress` varchar(80) NOT NULL,
+  `fldBillCity` varchar(80) NOT NULL,
+  `fldBillState` varchar(2) NOT NULL,
+  `fldBillZip` varchar(20) NOT NULL,
+  `fldEmail` varchar(80) NOT NULL,
+  `fldCardNumber` varchar(20) NOT NULL,
+  `fldExpDate` varchar(10) NOT NULL,
+  `fldCvv` varchar(5) NOT NULL,
+  `fldShippingRate` varchar(10) NOT NULL,
+  `fldGift` tinyint(1) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `tblOrderItems` (
+  `pmkOrderItemId` int(11) NOT NULL,
+  `fnkOrderId` int(11) NOT NULL,
+  `fnkProductId` int(11) NOT NULL,
+  `fldQuantity` int(11) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=53 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `tblMailingList` (
+  `fldRecipientId` int(11) NOT NULL,
+  `fldEmail` varchar(80) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `tblCategory` (
+  `pmkCategoryId` int(11) NOT NULL,
+  `fldCategoryName` varchar(80) NOT NULL,
+  `fldCategoryDescription` text NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `tblProducts` (
+  `pmkProductId` int(11) NOT NULL,
+  `fldProductName` varchar(80) NOT NULL,
+  `fnkSupplierId` int(11) NOT NULL,
+  `fnkCategoryId` int(11) NOT NULL,
+  `fldPrice` double NOT NULL,
+  `fldInStock` int(11) NOT NULL,
+  `fldInOrder` int(11) NOT NULL,
+  `fldDescription` text NOT NULL,
+  `fldImgUrl` text NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `tblSupplier` (
+  `pmkSupplierId` int(11) NOT NULL,
+  `fldSupplierName` varchar(80) NOT NULL,
+  `fldSupperAddress` varchar(80) NOT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
