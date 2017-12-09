@@ -107,10 +107,6 @@ $errorMsg = array();
 $dataRecord = array();
 $dataEntered = false;
 
-// have we mailed the information to the user?
-// ** not emaling in this lab
-// $mailed=false;
-
 //@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
 //
 // SECTION: 2 Process for when the form is submitted
@@ -166,8 +162,6 @@ if (isset($_POST["btnSubmit"])) {
     // will be in the order they appear. errorMsg will be displayed on the form
     // see section 3b. The error flag ($emailERROR) will be used in section 3c.
 
-        // hopefully this error checking is unnecessary
-        // because we have a default value
     if($trailName == "") {
         $errorMsg[] = "Please enter trail name";
         $trailError = true;

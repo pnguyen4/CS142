@@ -5,7 +5,7 @@ print "\n<!--  BEGIN include validation-functions -->\n";
 // function returns true or false
 function verifyAlphaNum ($testString) {
 	// Check for letters, numbers and dash, period, space and single quote only.
-	return (preg_match ("/^([[:alnum:]]|-|\.| |')+$/", $testString));
+	return (preg_match ("/^([[:alnum:]]|-|\.| |'|\/|\\|,|!|\")+$/", $testString));
 }
 
 function verifyEmail ($testString) {

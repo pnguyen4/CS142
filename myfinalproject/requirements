@@ -5,9 +5,9 @@ add new records
 update existing records
 delete records
 
-need minimum of one form:
+#need minimum of one form:
 
-insert data into at least two tables
+#insert data into at least two tables
 # one text box for a users email address
 # two additional text boxes
 # one list box
@@ -16,6 +16,6 @@ insert data into at least two tables
 # submit button
 # field sets and legends as needed
 # display erors
-should email person who filled out form (and save to database)
+#should email person who filled out form (and save to database)
 
 # minimum of 6 web pages

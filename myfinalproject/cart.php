@@ -93,7 +93,7 @@ if(isset($_SESSION['cart'])) {
             <td class="cartitem"><input type="text" name="quantity[<?php print $record['pmkProductId'] ?>]" size="5"
             value="<?php print $_SESSION['cart'][$record['pmkProductId']]['quantity'] ?>"/></td>
         </tr>
-        <?php }} else { print '<tr><td colspan="4"><b>Sorry, your shopping cart is empty.'; } ?>
+        <?php }} else { print '<tr><td><b>Sorry, your shopping cart is empty.'; } ?>
     <?php
     if(isset($_SESSION['cart'])) {
         print '<tr><td colspan="4"><b>Subtotal: $'.$totalprice; }?></b></td></tr>

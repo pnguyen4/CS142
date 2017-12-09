@@ -28,13 +28,27 @@
         }
         print '><a href="cart.php">View Cart ('.$count.')</a></li>';
 
-        print '<li ';
-        if ($PATH_PARTS['filename'] == 'tables') {
-            print ' class="activePage" ';
-        }
-        print '><a href="tables.php">Tables</a></li>';
-
         if($isAdmin) {
+
+            print '<li ';
+            if ($PATH_PARTS['filename'] == 'manageproducts') {
+                print ' class="activePage" ';
+            }
+            print '><a href="manageproducts.php">Product Form</a></li>';
+
+            print '<li ';
+            if ($PATH_PARTS['filename'] == 'manageorders') {
+                print ' class="activePage" ';
+            }
+            print '><a href="manageorders.php">Manage Orders</a></li>';
+
+
+            print '<li ';
+            if ($PATH_PARTS['filename'] == 'tables') {
+                print ' class="activePage" ';
+            }
+            print '><a href="tables.php">Tables</a></li>';
+
         }
 
         ?>

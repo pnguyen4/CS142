@@ -19,6 +19,9 @@ if ($debug){  // later you can uncomment the if statement
     if (isset($_POST["greentea"]) || empty($_POST)) {
         $query = 'SELECT * FROM tblProducts WHERE fnkCategoryId=3';
     }
+    if (isset($_POST["oolongtea"])) {
+        $query = 'SELECT * FROM tblProducts WHERE fnkCategoryId=4';
+    }
         if ($thisDatabaseReader->querySecurityOk($query)) {
             $query = $thisDatabaseReader->sanitizeQuery($query);
             $records = $thisDatabaseReader->select($query, '');
@@ -29,18 +32,20 @@ if ($debug){  // later you can uncomment the if statement
             print '<img class="teas" src='.$record['fldImgUrl'].' alt="'.
                 $record['fldProductName'].'">';
             print '<figcaption><a href="productpage.php?Id='.$record['pmkProductId']
-            .'">'.$record['fldProductName'].' - $'.$record['fldPrice'].'</a></figcaption>';
-            $description = $record['fldDescription'];
-            print "</figure>";
+                .'">'.$record['fldProductName'].' - $'.$record['fldPrice'].'</a>';
+
+            if($isAdmin) {
+                print '<br><a href="manageproducts.php?Id='.$record['pmkProductId'].'">EDIT</a>';
+            }
+
+            print '</figcaption>';
+            print "</figure>\n\t";
         }
     }
     if (isset($_POST["whitetea"])) {
         print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
     }
     if (isset($_POST["yellowtea"])) {
-        print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
-    }
-    if (isset($_POST["oolongtea"])) {
         print '<p style="padding: 2em;">We are restocking! Check back soon!</p>';
     }
     if (isset($_POST["puerhtea"])) {

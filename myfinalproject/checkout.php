@@ -316,7 +316,7 @@ if (isset($_POST["btnSubmit"])) {
     //
     // Process for when the form passes validation (the errorMsg array is empty)
     //
-    if (!$errorMsg) {
+    if (!$errorMsg && isset($_SESSION['cart'])) {
         if ($debug)
             print "<p>Form is valid</p>";
 
@@ -383,9 +383,9 @@ if (isset($_POST["btnSubmit"])) {
                 $thisInOrder = "";
                 $thisquery = array($id);
                 $query = "SELECT fldProductName, fldPrice, fldInStock, fldInOrder from tblProducts WHERE pmkProductId = ?";
-                if ($thisDatabaseWriter->querySecurityOk($query, 1)) {
-                    $query = $thisDatabaseWriter->sanitizeQuery($query);
-                    $thisitem = $thisDatabaseWriter->select($query, $thisquery);
+                if ($thisDatabaseReader->querySecurityOk($query, 1)) {
+                    $query = $thisDatabaseReader->sanitizeQuery($query);
+                    $thisitem = $thisDatabaseReader->select($query, $thisquery);
                 }
                 $reciept .= $_SESSION['cart'][$id]['quantity']." x ".
                     $thisitem[0]['fldProductName']." @ $".$thisitem[0]['fldPrice']."<br>";
@@ -454,9 +454,8 @@ if (isset($_POST["btnSubmit"])) {
                 print "Error!: " . $e->getMessage() . "</br>";
             $errorMsg[] = "There was a problem with accepting your data please contact us directly.";
         }
-
-
-    } // end form is valid
+        session_destroy(); //cart should be empty after purchasing
+    } else { $message = "Your cart is empty."; }// end form is valid
 }   // ends if form was submitted.
 ?>
 
@@ -470,7 +469,11 @@ if (isset($_POST["btnSubmit"])) {
     // If its the first time coming to the form or there are errors we are going
     // to display the form.
     if (isset($_POST["btnSubmit"]) AND empty($errorMsg)) { // closing of if marked with: end body submit
-        print "<h2>We have sent a copy of this message to your email: <br>".$message."<h2>";
+        if (isset($_SESSION["cart"])) {
+            print "<h2>We have sent a copy of this message to your email: <br>".$message."<h2>";
+        } else {
+            print "<h2>".$message."<br>You cannot checkout an empty cart.<h2>";
+        }
 
     } else {
 
